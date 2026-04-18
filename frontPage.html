@@ -1293,11 +1293,22 @@ footer {
      ============================================================ -->
 
 <div id="game-overlay" class="hidden">
-  <button id="close-game">Quit Mission</button>
-  <div id="game-viewport">
-    </div>
+  <button id="close-game">Close</button>
+</div>
 </div>
 <script>
+// Add this to prevent the jump and open the game
+document.querySelectorAll('.game-btn-go, .nav-cta').forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.preventDefault(); // <--- This prevents the browser from jumping
+    
+    // Now open the game
+    const overlay = document.getElementById('game-overlay');
+    if (overlay) {
+      overlay.classList.remove('hidden');
+    }
+  });
+});
   // 1. Join Waitlist Logic
   function joinWaitlist() {
     const input = document.getElementById('join-input');
