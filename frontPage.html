@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SpySquirrel — Crack the Code. Uncover the Truth.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inconsolata:wght@300;400;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg:        #060a06;
+  --surface:   #0b100b;
+  --green:     #39ff6a;
+  --green-dim: #1e7a3a;
+  --green-faint: rgba(57,255,106,0.06);
+  --amber:     #ffb830;
+  --amber-dim: #7a5210;
+  --red:       #ff3b3b;
+  --text:      #c8e8c8;
+  --muted:     #4a6b4a;
+  --border:    rgba(57,255,106,0.15);
+  --scan:      rgba(57,255,106,0.03);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;overflow-x:hidden;cursor:none;animation:flicker 8s infinite;}
+.cursor{position:fixed;width:18px;height:18px;border:1px solid var(--green);pointer-events:none;z-index:99999;transform:translate(-50%,-50%);}
+.cursor::before,.cursor::after{content:'';position:absolute;background:var(--green);}
+.cursor::before{width:1px;height:8px;left:50%;top:-4px;transform:translateX(-50%);}
+.cursor::after{width:8px;height:1px;top:50%;left:-4px;transform:translateY(-50%);}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scan) 2px,var(--scan) 4px);pointer-events:none;z-index:9998;}
+@keyframes flicker{0%,100%{opacity:1;}92%{opacity:1;}93%{opacity:.94;}94%{opacity:1;}96%{opacity:.97;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(6,10,6,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;color:var(--green);text-decoration:none;letter-spacing:.1em;display:flex;align-items:center;gap:.6rem;}
+.nav-logo .ver{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:2px;}
+nav ul{list-style:none;display:flex;gap:2rem;}
+nav ul a{font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+nav ul a:hover{color:var(--green);}
+.nav-cta{font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;padding:.5rem 1.2rem;border:1px solid var(--green);color:var(--green);text-decoration:none;background:transparent;transition:background .2s,color .2s;font-family:'Share Tech Mono',monospace;}
+.nav-cta:hover{background:var(--green);color:var(--bg);}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:3rem;padding:7rem 2.5rem 4rem;position:relative;}
+#hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 80% at 50% 50%,black 40%,transparent 100%);pointer-events:none;}
+.hero-left{position:relative;z-index:1;}
+.hero-tag{display:inline-flex;align-items:center;gap:.6rem;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);border:1px solid rgba(255,184,48,.3);padding:.35rem .8rem;margin-bottom:2rem;animation:fadeUp .6s ease both;}
+.hero-tag .blink{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blink 1.2s step-end infinite;}
+.hero-title{font-family:'Orbitron',sans-serif;font-size:clamp(2.4rem,5vw,4.2rem);font-weight:900;line-height:1.05;letter-spacing:.02em;color:#fff;margin-bottom:.5rem;animation:fadeUp .6s .1s ease both;}
+.hero-title .green{color:var(--green);}
+.hero-sub{font-size:.88rem;line-height:1.8;color:var(--muted);max-width:440px;margin-bottom:2.5rem;animation:fadeUp .6s .2s ease both;}
+.hero-sub strong{color:var(--text);}
+.hero-actions{display:flex;gap:1rem;animation:fadeUp .6s .3s ease both;}
+.btn-green{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;padding:.85rem 1.8rem;background:var(--green);color:var(--bg);border:none;cursor:none;font-weight:700;text-decoration:none;display:inline-block;transition:opacity .2s,box-shadow .2s;}
+.btn-green:hover{opacity:.88;box-shadow:0 0 20px rgba(57,255,106,.4);}
+.btn-ghost{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;padding:.85rem 1.8rem;background:transparent;color:var(--text);border:1px solid var(--border);cursor:none;text-decoration:none;display:inline-block;transition:border-color .2s,color .2s;}
+.btn-ghost:hover{border-color:var(--green);color:var(--green);}
+
+/* TERMINAL */
+.terminal{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);box-shadow:0 0 60px rgba(57,255,106,.07);animation:fadeIn .8s .4s ease both;}
+.term-bar{display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;border-bottom:1px solid var(--border);background:rgba(57,255,106,.04);}
+.term-dot{width:9px;height:9px;border-radius:50%;}
+.term-dot.r{background:#ff3b3b;}.term-dot.y{background:#ffbd2d;}.term-dot.g{background:var(--green);}
+.term-title{font-size:.58rem;letter-spacing:.2em;color:var(--muted);margin-left:auto;}
+.term-body{padding:1.4rem 1.4rem 1.6rem;font-size:.78rem;line-height:1.7;}
+.t-line{display:flex;gap:.6rem;margin-bottom:.2rem;}
+.t-prompt{color:var(--green-dim);flex-shrink:0;}
+.t-cmd{color:var(--text);}
+.t-out{color:var(--muted);margin-left:1.4rem;margin-bottom:.25rem;}
+.t-hi{color:var(--amber);}.t-g{color:var(--green);}.t-r{color:var(--red);}.t-dim{color:rgba(74,107,74,.5);}
+.cipher-display{background:var(--green-faint);border:1px solid var(--border);padding:1rem;margin:.8rem 0;font-size:.9rem;letter-spacing:.3em;color:var(--amber);word-break:break-all;}
+.term-input-row{display:flex;align-items:center;gap:.5rem;margin-top:.8rem;border:1px solid var(--border);padding:.5rem .8rem;}
+.term-input-row span{color:var(--green);font-size:.78rem;}
+#demo-input{flex:1;background:transparent;border:none;outline:none;color:var(--green);font-family:'Share Tech Mono',monospace;font-size:.78rem;cursor:none;caret-color:var(--green);letter-spacing:.1em;}
+.term-submit{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--green);padding:.3rem .7rem;cursor:none;transition:background .15s,color .15s;white-space:nowrap;}
+.term-submit:hover{background:var(--green);color:var(--bg);}
+#demo-result{margin-top:.6rem;font-size:.75rem;min-height:1.2rem;}
+
+/* TICKER */
+.ticker{background:rgba(57,255,106,.04);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:.6rem 0;}
+.ticker-inner{display:inline-flex;gap:3rem;animation:marquee 22s linear infinite;white-space:nowrap;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);}
+.ticker-inner .hi{color:var(--green);}
+
+/* HOW */
+#how{padding:6rem 2.5rem;max-width:1200px;margin:0 auto;}
+.section-eyebrow{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green);margin-bottom:.7rem;}
+.section-eyebrow::before{content:'> ';color:var(--muted);}
+.section-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;color:#fff;margin-bottom:4rem;line-height:1.2;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.step{background:var(--bg);padding:2.5rem 2rem;position:relative;transition:background .3s;}
+.step:hover{background:var(--surface);}
+.step-num{font-family:'Orbitron',sans-serif;font-size:3rem;font-weight:900;color:rgba(57,255,106,.07);line-height:1;margin-bottom:.5rem;}
+.step-icon{font-size:2rem;display:block;margin-bottom:1rem;}
+.step-title{font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;color:var(--green);letter-spacing:.08em;margin-bottom:.8rem;text-transform:uppercase;}
+.step-desc{font-size:.8rem;line-height:1.75;color:var(--muted);}
+.step-conn{position:absolute;top:50%;right:-1rem;transform:translateY(-50%);color:var(--green);font-size:.7rem;z-index:1;background:var(--bg);padding:.2rem;}
+
+/* CIPHERS */
+#ciphers{padding:6rem 2.5rem;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.ciphers-inner{max-width:1200px;margin:0 auto;}
+.cipher-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:3rem;}
+.cipher-card{background:var(--surface);padding:2rem 1.5rem;position:relative;overflow:hidden;transition:background .3s;}
+.cipher-card:hover{background:rgba(57,255,106,.04);}
+.cipher-card.locked{opacity:.45;pointer-events:none;}
+.cipher-card.locked::after{content:'🔒  CLEARANCE REQUIRED';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.58rem;letter-spacing:.18em;color:var(--muted);background:rgba(6,10,6,.75);text-align:center;}
+.cipher-level{font-size:.54rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.cipher-name{font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;color:var(--amber);margin-bottom:.3rem;letter-spacing:.06em;}
+.cipher-type{font-size:.7rem;color:var(--muted);margin-bottom:1rem;}
+.cipher-sample{font-size:.62rem;color:var(--green-dim);letter-spacing:.12em;word-break:break-all;padding:.5rem;background:var(--green-faint);border-left:2px solid var(--green-dim);line-height:1.6;}
+.difficulty{display:flex;gap:3px;margin-top:1rem;}
+.diff-pip{width:16px;height:4px;background:var(--border);}
+.diff-pip.on{background:var(--green);}
+.diff-pip.on.a{background:var(--amber);}
+.diff-pip.on.r{background:var(--red);}
+
+/* LORE */
+#lore{padding:6rem 2.5rem;max-width:1200px;margin:0 auto;}
+.lore-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem;}
+.lore-card{border:1px solid var(--border);padding:1.8rem;position:relative;background:var(--surface);overflow:hidden;}
+.lore-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent);}
+.lore-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.lore-id{font-size:.56rem;letter-spacing:.25em;text-transform:uppercase;color:var(--green);}
+.lore-status{font-size:.53rem;letter-spacing:.15em;text-transform:uppercase;padding:.2rem .5rem;border:1px solid;}
+.lore-status.rec{color:var(--green);border-color:rgba(57,255,106,.3);}
+.lore-status.red{color:var(--red);border-color:rgba(255,59,59,.3);}
+.lore-status.par{color:var(--amber);border-color:rgba(255,184,48,.3);}
+.lore-title{font-family:'Orbitron',sans-serif;font-size:.88rem;font-weight:700;color:#fff;margin-bottom:.8rem;letter-spacing:.05em;}
+.lore-body{font-size:.78rem;line-height:1.78;color:var(--muted);}
+.redact{display:inline-block;background:var(--muted);color:transparent;user-select:none;border-radius:1px;letter-spacing:0;}
+.lore-footer{margin-top:1.2rem;padding-top:.8rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+.lore-footer .tag{color:var(--amber);}
+.lore-locked{position:absolute;inset:0;background:rgba(6,10,6,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;border:1px solid var(--border);}
+.lore-locked .li{font-size:2rem;opacity:.5;}
+.lore-locked p{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+
+/* LEADERBOARD */
+#leaderboard{padding:6rem 2.5rem;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.lb-inner{max-width:800px;margin:0 auto;}
+.lb-table{width:100%;border-collapse:collapse;margin-top:3rem;font-size:.78rem;}
+.lb-table thead tr{border-bottom:1px solid var(--border);}
+.lb-table th{font-size:.56rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);padding:.6rem 1rem;text-align:left;font-weight:400;}
+.lb-table td{padding:.85rem 1rem;border-bottom:1px solid rgba(57,255,106,.05);color:var(--text);}
+.lb-table tr:hover td{background:var(--green-faint);}
+.rank{color:var(--muted);font-size:.65rem;}
+.rank.top{color:var(--amber);font-family:'Orbitron',sans-serif;font-size:.75rem;}
+.lb-agent{color:var(--green);}
+.lb-level{color:var(--amber);}
+.lb-time{color:var(--muted);font-size:.7rem;}
+.lb-score{font-family:'Orbitron',sans-serif;font-size:.8rem;color:#fff;}
+.lb-badge{display:inline-block;font-size:.53rem;letter-spacing:.12em;padding:.15rem .4rem;border:1px solid;text-transform:uppercase;}
+.lb-badge.elite{color:var(--amber);border-color:rgba(255,184,48,.3);}
+.lb-badge.agent{color:var(--green);border-color:var(--border);}
+
+/* WAITLIST */
+#waitlist{padding:7rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+#waitlist::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(57,255,106,.04) 0%,transparent 70%);pointer-events:none;}
+#waitlist::after{content:'DECRYPT';position:absolute;font-family:'Orbitron',sans-serif;font-size:18vw;font-weight:900;color:rgba(57,255,106,.02);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap;letter-spacing:.05em;}
+.wl-inner{position:relative;z-index:1;max-width:520px;margin:0 auto;}
+.wl-tag{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;}
+.wl-title{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:1rem;letter-spacing:.02em;}
+.wl-title span{color:var(--green);}
+.wl-sub{font-size:.85rem;color:var(--muted);line-height:1.75;margin-bottom:2.5rem;}
+.wl-form{display:flex;max-width:400px;margin:0 auto 1rem;border:1px solid var(--border);}
+.wl-form input{flex:1;background:transparent;border:none;border-right:1px solid var(--border);padding:.9rem 1rem;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:.82rem;outline:none;}
+.wl-form input::placeholder{color:var(--muted);}
+.wl-form input:focus{background:var(--green-faint);}
+.wl-form button{background:var(--green);color:var(--bg);border:none;padding:.9rem 1.3rem;font-family:'Share Tech Mono',monospace;font-size:.63rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:none;transition:opacity .2s;white-space:nowrap;}
+.wl-form button:hover{opacity:.85;}
+.wl-note{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
+
+/* FOOTER */
+footer{padding:2rem 2.5rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-logo{font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:900;color:var(--green);letter-spacing:.08em;}
+footer ul{list-style:none;display:flex;gap:1.8rem;}
+footer ul a{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+footer ul a:hover{color:var(--green);}
+.footer-copy{font-size:.56rem;color:var(--muted);letter-spacing:.1em;}
+
+@media(max-width:900px){
+  nav ul,.nav-cta{display:none;}
+  #hero{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr;}
+  .cipher-grid{grid-template-columns:1fr 1fr;}
+  .lore-grid{grid-template-columns:1fr;}
+  .step-conn{display:none;}
+  footer{flex-direction:column;text-align:center;}
+  footer ul{justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    [🐿️] SpySquirrel <span class="ver">v0.9-beta</span>
+  </a>
+  <ul>
+    <li><a href="#how">Mechanics</a></li>
+    <li><a href="#ciphers">Ciphers</a></li>
+    <li><a href="#lore">Intel Logs</a></li>
+    <li><a href="#leaderboard">Agents</a></li>
+  </ul>
+  <a class="nav-cta" href="#waitlist">Request Access</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">
+      <span class="blink"></span>
+      Live Transmission — Operation ACORN Active
+    </div>
+    <h1 class="hero-title">
+      CRACK THE <span class="green">CODE.</span><br>
+      FIND THE<br>SQUIRREL.
+    </h1>
+    <p class="hero-sub">
+      A <strong>hacking-puzzle game</strong> where every cipher you break unlocks another layer
+      of the most classified squirrel spy universe ever buried in plain text.
+      Harder levels. Deeper lore. Darker secrets.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-green" href="#waitlist">Join the Network</a>
+      <a class="btn-ghost" href="#how">How It Works</a>
+    </div>
+  </div>
+
+  <!-- LIVE DEMO TERMINAL -->
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dot r"></div>
+      <div class="term-dot y"></div>
+      <div class="term-dot g"></div>
+      <div class="term-title">SQUIRREL_OS // INTEL RECOVERY MODULE</div>
+    </div>
+    <div class="term-body">
+      <div class="t-line"><span class="t-prompt">sys&gt;</span><span class="t-cmd">load_mission --id 001 --cipher caesar</span></div>
+      <div class="t-out">Connecting to ACORN server... <span class="t-g">OK</span></div>
+      <div class="t-out">Target file: <span class="t-hi">BURIED_INTEL_001.enc</span></div>
+      <div class="t-out t-dim">────────────────────────────────────</div>
+      <div class="t-out">Intercepted cipher text:</div>
+      <div class="cipher-display">ZWF AOL ZXBPYYLS</div>
+      <div class="t-out">Type: <span class="t-hi">Caesar Shift</span> &nbsp;·&nbsp; Hint: shift = <span class="t-g">7</span></div>
+      <div class="t-out t-dim">────────────────────────────────────</div>
+      <div class="t-out">Decode to recover intel:</div>
+      <div class="term-input-row">
+        <span>decode&gt;</span>
+        <input type="text" id="demo-input" placeholder="enter plaintext..." autocomplete="off" spellcheck="false" />
+        <button class="term-submit" onclick="checkAnswer()">TRANSMIT</button>
+      </div>
+      <div id="demo-result"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="hi">// TRANSMISSION LIVE</span>
+    <span>CAESAR &nbsp;·&nbsp; VIGENERE &nbsp;·&nbsp; PLAYFAIR &nbsp;·&nbsp; ENIGMA &nbsp;·&nbsp; AES-256</span>
+    <span class="hi">// LEVEL 1 UNLOCKED</span>
+    <span>AGENT NUTKIN — STILL AT LARGE</span>
+    <span class="hi">// 12 LAYERS OF ENCRYPTION AWAIT</span>
+    <span>OPERATION ACORN &nbsp;·&nbsp; OPERATION OAK &nbsp;·&nbsp; OPERATION DREY</span>
+    <span class="hi">// TRANSMISSION LIVE</span>
+    <span>CAESAR &nbsp;·&nbsp; VIGENERE &nbsp;·&nbsp; PLAYFAIR &nbsp;·&nbsp; ENIGMA &nbsp;·&nbsp; AES-256</span>
+    <span class="hi">// LEVEL 1 UNLOCKED</span>
+    <span>AGENT NUTKIN — STILL AT LARGE</span>
+    <span class="hi">// 12 LAYERS OF ENCRYPTION AWAIT</span>
+    <span>OPERATION ACORN &nbsp;·&nbsp; OPERATION OAK &nbsp;·&nbsp; OPERATION DREY</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-eyebrow">Mission Briefing</div>
+  <h2 class="section-title">Three steps.<br>Infinite rabbit holes.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <span class="step-icon">📟</span>
+      <div class="step-title">Receive Intercepted Intel</div>
+      <p class="step-desc">Each mission drops a fragment of encrypted data — a message, map coordinate, or dossier extract. Cipher type and difficulty escalate with your clearance level.</p>
+      <div class="step-conn">▶</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <span class="step-icon">🔣</span>
+      <div class="step-title">Crack the Cipher</div>
+      <p class="step-desc">Use pattern analysis, frequency tools, and instinct to decode the message. No hand-holding. Some ciphers break in minutes. Others might take days.</p>
+      <div class="step-conn">▶</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <span class="step-icon">📂</span>
+      <div class="step-title">Recover Buried Lore</div>
+      <p class="step-desc">A correct decode unlocks a new chapter of the SpySquirrel universe — agent backstories, faction wars, double-crosses, and a conspiracy that goes all the way to the top of the oak tree.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CIPHER TYPES -->
+<section id="ciphers">
+  <div class="ciphers-inner">
+    <div class="section-eyebrow">Cipher Database</div>
+    <h2 class="section-title">The further you go,<br>the darker it gets.</h2>
+    <div class="cipher-grid">
+      <div class="cipher-card">
+        <div class="cipher-level">Level 1–3 // Rookie</div>
+        <div class="cipher-name">Caesar Shift</div>
+        <div class="cipher-type">Substitution — Rotational</div>
+        <div class="cipher-sample">TQZJ AZN DBZFGZGG</div>
+        <div class="difficulty">
+          <div class="diff-pip on"></div><div class="diff-pip"></div><div class="diff-pip"></div><div class="diff-pip"></div><div class="diff-pip"></div>
+        </div>
+      </div>
+      <div class="cipher-card">
+        <div class="cipher-level">Level 4–7 // Field Agent</div>
+        <div class="cipher-name">Vigenère</div>
+        <div class="cipher-type">Polyalphabetic — Keyword</div>
+        <div class="cipher-sample">LXFOPV EFRNHR WIREMU</div>
+        <div class="difficulty">
+          <div class="diff-pip on a"></div><div class="diff-pip on a"></div><div class="diff-pip on a"></div><div class="diff-pip"></div><div class="diff-pip"></div>
+        </div>
+      </div>
+      <div class="cipher-card">
+        <div class="cipher-level">Level 8–11 // Operative</div>
+        <div class="cipher-name">Playfair</div>
+        <div class="cipher-type">Digraph — Grid-based</div>
+        <div class="cipher-sample">BM OD ZB XD NA BE KU DM</div>
+        <div class="difficulty">
+          <div class="diff-pip on r"></div><div class="diff-pip on r"></div><div class="diff-pip on r"></div><div class="diff-pip on r"></div><div class="diff-pip"></div>
+        </div>
+      </div>
+      <div class="cipher-card locked">
+        <div class="cipher-level">Level 12 // ██████</div>
+        <div class="cipher-name">???</div>
+        <div class="cipher-type">CLEARANCE REQUIRED</div>
+        <div class="cipher-sample">01001010 11010010 00111001</div>
+        <div class="difficulty">
+          <div class="diff-pip on r"></div><div class="diff-pip on r"></div><div class="diff-pip on r"></div><div class="diff-pip on r"></div><div class="diff-pip on r"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LORE / INTEL LOGS -->
+<section id="lore">
+  <div class="section-eyebrow">Intel Recovery Archive</div>
+  <h2 class="section-title">What agents have uncovered so far.</h2>
+  <div class="lore-grid">
+
+    <div class="lore-card">
+      <div class="lore-header">
+        <div class="lore-id">FILE // SS-001-NUTKIN</div>
+        <div class="lore-status rec">✓ RECOVERED</div>
+      </div>
+      <div class="lore-title">The Double Agent of Drey-9</div>
+      <div class="lore-body">
+        Agent NUTKIN went dark on March 3rd after his handler, known only as <span class="t-hi">GREY TAIL</span>, failed to make the 6AM drop. What the bureau didn't know was that NUTKIN had been running a parallel operation for the Oak Syndicate for over three years. Every acorn cache was a dead drop. Every hollow tree, a server.
+      </div>
+      <div class="lore-footer">
+        <span>Recovered by Agent #0047</span>
+        <span class="tag">OPERATION ACORN // LVL 1</span>
+      </div>
+    </div>
+
+    <div class="lore-card">
+      <div class="lore-header">
+        <div class="lore-id">FILE // SS-002-DREY9</div>
+        <div class="lore-status par">◑ PARTIAL</div>
+      </div>
+      <div class="lore-title">The Oak Syndicate Manifesto</div>
+      <div class="lore-body">
+        The Syndicate's founding document, dated <span class="t-hi">autumn 1987</span>, outlined a single objective: control every <span class="redact">████████████████████</span> on the eastern seaboard before the <span class="redact">█████████</span> could retaliate. The third paragraph names a squirrel known only as <span class="redact">████████</span> — whose real identity remains <span class="redact">███████████████</span>.
+      </div>
+      <div class="lore-footer">
+        <span>Partial decode — cipher unsolved</span>
+        <span class="tag">OPERATION OAK // LVL 4</span>
+      </div>
+    </div>
+
+    <div class="lore-card">
+      <div class="lore-header">
+        <div class="lore-id">FILE // SS-005-SHADOW</div>
+        <div class="lore-status red">⊘ REDACTED</div>
+      </div>
+      <div class="lore-title">Director Shadow's True Identity</div>
+      <div class="lore-body">
+        <span class="redact">████████████████████████████████████████████████ ██████████████ ████████████████████████████████████████ ████████████ ████████████████████████████</span>
+      </div>
+      <div class="lore-footer">
+        <span>Solve Level 8 to unlock</span>
+        <span class="tag">OPERATION DREY // LVL 8</span>
+      </div>
+      <div class="lore-locked">
+        <div class="li">🔐</div>
+        <p>Complete Level 7 to access</p>
+      </div>
+    </div>
+
+    <div class="lore-card">
+      <div class="lore-header">
+        <div class="lore-id">FILE // SS-012-ENDGAME</div>
+        <div class="lore-status red">⊘ CLASSIFIED</div>
+      </div>
+      <div class="lore-title">The Final Transmission</div>
+      <div class="lore-body" style="opacity:.3;">The last known message from HQ before the blackout. If the cipher is ever cracked, everything changes.</div>
+      <div class="lore-footer">
+        <span>???</span>
+        <span class="tag">OPERATION ENDGAME // LVL 12</span>
+      </div>
+      <div class="lore-locked">
+        <div class="li">🔐</div>
+        <p>No agent has reached this level</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section id="leaderboard">
+  <div class="lb-inner">
+    <div class="section-eyebrow">Agent Registry</div>
+    <h2 class="section-title">Top field operatives — beta cohort.</h2>
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Agent Handle</th><th>Level Reached</th><th>Best Time</th><th>Score</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="rank top">01</td><td class="lb-agent">n3stm4ster_🐿️</td><td class="lb-level">LVL 11 — PLAYFAIR</td><td class="lb-time">04m 13s</td><td class="lb-score">98,440</td><td><span class="lb-badge elite">ELITE</span></td></tr>
+        <tr><td class="rank top">02</td><td class="lb-agent">xr0t47</td><td class="lb-level">LVL 10 — PLAYFAIR</td><td class="lb-time">06m 52s</td><td class="lb-score">87,210</td><td><span class="lb-badge elite">ELITE</span></td></tr>
+        <tr><td class="rank top">03</td><td class="lb-agent">void_acorn</td><td class="lb-level">LVL 9 — PLAYFAIR</td><td class="lb-time">09m 04s</td><td class="lb-score">76,555</td><td><span class="lb-badge elite">ELITE</span></td></tr>
+        <tr><td class="rank">04</td><td class="lb-agent">dr_frequency</td><td class="lb-level">LVL 7 — VIGENÈRE</td><td class="lb-time">11m 30s</td><td class="lb-score">61,200</td><td><span class="lb-badge agent">AGENT</span></td></tr>
+        <tr><td class="rank">05</td><td class="lb-agent">grey_tail_irl</td><td class="lb-level">LVL 6 — VIGENÈRE</td><td class="lb-time">14m 19s</td><td class="lb-score">52,890</td><td><span class="lb-badge agent">AGENT</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section id="waitlist">
+  <div class="wl-inner">
+    <div class="wl-tag">&gt; clearance_request.exe</div>
+    <h2 class="wl-title">Ready to<br><span>decrypt?</span></h2>
+    <p class="wl-sub">SpySquirrel launches in closed beta. Sign up for early agent credentials and be among the first to crack the ciphers — and uncover what the Syndicate has been hiding.</p>
+    <div class="wl-form">
+      <input type="email" id="wl-input" placeholder="agent@yourdomain.com" />
+      <button onclick="joinWaitlist()">ENLIST ▶</button>
+    </div>
+    <div class="wl-note" id="wl-msg">// No spam. Transmission encrypted. Credentials issued on launch.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">[🐿️] SpySquirrel</div>
+  <ul>
+    <li><a href="#">Mechanics</a></li>
+    <li><a href="#">Cipher DB</a></li>
+    <li><a href="#">Lore Wiki</a></li>
+    <li><a href="#">Discord</a></li>
+    <li><a href="#">Press Kit</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 SpySquirrel — All intel encrypted. All rights reserved.</div>
+</footer>
+
+<script>
+/* cursor */
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+
+/* hero demo — cipher: TQZJ AZN DBZFGZGG = SPYSQUIRREL (ROT13 variant, shift 13 applied letter by letter)
+   Actually: T(+13)=G? Let me use a real ROT13. T->G, Q->D... 
+   Let me just set the answer to what decodes to SPYSQUIRREL via shift 13:
+   S=19, +13=6=G → G
+   Actually ROT13: S->F, P->C, Y->L... no.
+   Shift 13 decode: take each letter and shift back 13.
+   T=19, 19-13=6=G. Q=16, 16-13=3=D. Z=25, 25-13=12=M. J=9, 9-13=-4+26=22=W.
+   TQZJ -> GDMW. That's not SPYSQUIRREL.
+   
+   Let me just encode SPYSQUIRREL with shift 7:
+   S+7=Z, P+7=W, Y+7=F, S+7=Z, Q+7=X, U+7=B, I+7=P, R+7=Y, R+7=Y, E+7=L, L+7=S
+   = ZWFZXBPYYS  -- nope doesn't match my cipher text.
+   
+   My cipher text is TQZJ AZN DBZFGZGG
+   Count letters: T-Q-Z-J (4), A-Z-N (3), D-B-Z-F-G-Z-G-G (8) = 15 letters
+   SPYSQUIRREL = 11 letters. Doesn't match.
+   
+   Let me just make it a 3-word phrase. Let me encode "SPYSQUIRREL" is 11 letters.
+   
+   Let me encode "SPY THE SQUIRREL" with Caesar shift 13:
+   S->F, P->C, Y->L, T->G, H->U, E->R, S->F, Q->D, U->H, I->V, R->E, R->E, E->R, L->Y
+   = FCL GUR FDHVEEREY
+   
+   Hmm that's ROT13 (shift 13). Let me use that.
+   SPY THE SQUIRREL with ROT13 = FCL GUR FDHVEEREY
+   
+   But I wrote TQZJ AZN DBZFGZGG and hint says shift=13.
+   
+   Let me decode TQZJ AZN DBZFGZGG with shift 13 (shift back 13):
+   T(19)-13=6=G
+   Q(16)-13=3=D
+   Z(25)-13=12=M
+   J(9)-13=-4→22=W
+   
+   A(0)-13=-13→13=N
+   Z(25)-13=12=M
+   N(13)-13=0=A
+   
+   D(3)-13=-10→16=Q
+   B(1)-13=-12→14=O
+   Z(25)-13=12=M
+   F(5)-13=-8→18=S
+   G(6)-13=-7→19=T
+   Z(25)-13=12=M
+   G(6)-13=-7→19=T
+   G(6)-13=-7→19=T
+   
+   So TQZJ AZN DBZFGZGG decoded with shift 13 = "GDMW NMA QOMSTMTT" - that's nonsense.
+   
+   Let me just change the JS answer to match what TQZJ AZN DBZFGZGG decodes to.
+   
+   Actually, let me just pick a real encoded message. Let me encode "FIND THE SQUIRREL" with Caesar shift 7:
+   F+7=M, I+7=P, N+7=U, D+7=K → MPUK
+   T+7=A, H+7=O, E+7=L → AOL  
+   S+7=Z, Q+7=X, U+7=B, I+7=P, R+7=Y, R+7=Y, E+7=L, L+7=S → ZXBPYYLS
+   
+   So encoded = "MPUK AOL ZXBPYYLS"
+   Decoded = "FIND THE SQUIRREL"
+   
+   Let me just set that. I'll fix the cipher display text and the answer in JS.
+   
+   Actually, simplest fix: just set the answer in JS to match the displayed cipher. Let me decode TQZJ AZN DBZFGZGG with various shifts until I get something sensible.
+   
+   Shift 6 back:
+   T-6=N, Q-6=K, Z-6=T, J-6=D = NKTD
+   Nope.
+   
+   Shift 7 back:
+   T-7=M, Q-7=J, Z-7=S, J-7=C = MJSC
+   Nope.
+   
+   Let me just change the cipher text to something that actually decodes cleanly. I'll encode "SPYSQUIRREL" - but that's one word. Let me do "SPY THE SQUIRREL" with shift 7:
+   ENCODED: ZWFAGLAZBXYYLS -> wait let me redo.
+   
+   A=0,B=1,...Z=25. Shift +7 means add 7.
+   S=18+7=25=Z
+   P=15+7=22=W  
+   Y=24+7=31-26=5=F
+   (space)
+   T=19+7=26-26=0=A
+   H=7+7=14=O
+   E=4+7=11=L
+   (space)
+   S=18+7=25=Z
+   Q=16+7=23=X
+   U=20+7=27-26=1=B
+   I=8+7=15=P
+   R=17+7=24=Y
+   R=17+7=24=Y
+   E=4+7=11=L
+   L=11+7=18=S
+   
+   Encoded: "ZWF AOL ZXBPYYLS"
+   Answer: "SPY THE SQUIRREL"
+   
+   Great. Let me update the cipher display and the JS answer accordingly. But since I'm creating the file, I'll just put the right values.
+*/
+
+const ANSWER = "SPY THE SQUIRREL";
+
+function checkAnswer() {
+  const val = document.getElementById('demo-input').value.trim().toUpperCase();
+  const result = document.getElementById('demo-result');
+  if (val === ANSWER) {
+    result.style.color = 'var(--green)';
+    result.innerHTML = '✓ &nbsp;DECRYPTION SUCCESSFUL &nbsp;// Intel unlocked: <span style="color:var(--amber)">AGENT NUTKIN IS COMPROMISED</span>';
+    document.getElementById('demo-input').value = '';
+  } else if (val.length > 2) {
+    result.style.color = 'var(--red)';
+    result.textContent = '✗  ACCESS DENIED — incorrect decode. Recheck your shift.';
+  }
+}
+
+document.getElementById('demo-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAnswer();
+  else document.getElementById('demo-result').textContent = '';
+});
+
+/* waitlist */
+function joinWaitlist() {
+  const inp = document.getElementById('wl-input');
+  const msg = document.getElementById('wl-msg');
+  if (inp.value.includes('@') && inp.value.includes('.')) {
+    msg.style.color = 'var(--green)';
+    msg.textContent = '// ✓ Transmission received. Agent credentials will be issued on launch. Stand by.';
+    inp.value = '';
+    inp.placeholder = 'Agent registered.';
+    inp.disabled = true;
+  } else {
+    inp.style.outline = '1px solid var(--red)';
+    inp.placeholder = 'Valid agent email required.';
+    inp.value = '';
+    setTimeout(() => { inp.style.outline = ''; }, 1500);
+  }
+}
+
+/* glitch effect on title */
+setInterval(() => {
+  const title = document.querySelector('.hero-title');
+  if (!title) return;
+  title.style.textShadow = `${(Math.random()*4-2).toFixed(1)}px 0 var(--red), ${(Math.random()*-4+2).toFixed(1)}px 0 var(--green)`;
+  setTimeout(() => { title.style.textShadow = ''; }, 100);
+}, 4000);
+</script>
+</body>
+</html>
