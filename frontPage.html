@@ -1036,7 +1036,7 @@ footer {
         <span class="sky-word">Secret</span>
         <span class="green-word"> Squirrel</span>
       </h1>
-      <p class="hero-sub">Be the best squirrel possible and arn your rank.</p>
+      <p class="hero-sub">Be the best squirrel possible and earn your rank.</p>
       <p class="hero-body">
         Four gruelling field tests stand between you and the rank of Legend.
         Sharpen your instincts, grab your acorns, and prove
@@ -1285,113 +1285,73 @@ footer {
      ============================================================ -->
 <footer>
   <div class="footer-logo">SpySquirrel</div>
-  <p class="footer-copy">&copy; 2025 SpySquirrel — Hackathon Edition</p>
+  <p class="footer-copy">&copy; 2026 SpySquirrel — Hackathon Edition</p>
 </footer>
 
 <!-- ============================================================
      SCRIPTS
      ============================================================ -->
-<script>
-// Waitlist form submission
-function joinWaitlist() {
-  const input = document.getElementById('join-input');
-  const msg   = document.getElementById('join-msg');
-  const val   = input.value.trim();
 
-  if (val.includes('@') && val.split('@')[1]?.includes('.')) {
-    msg.textContent = 'Transmission received. Your dossier is incoming. Stand by, agent.';
-    input.value = '';
-    input.placeholder = 'Agent registered.';
-    input.disabled = true;
-  } else {
-    input.style.borderColor = 'var(--red)';
-    msg.textContent = 'A valid email is required to establish contact.';
-    setTimeout(() => { input.style.borderColor = ''; msg.textContent = ''; }, 1800);
-  }
-}
-
-// Enter key submits
-document.getElementById('join-input')?.addEventListener('keydown', e => {
-  if (e.key === 'Enter') joinWaitlist();
-});
-
-// Scroll-in animations using IntersectionObserver
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.style.opacity = '1';
-      e.target.style.transform = 'translateY(0) scale(1)';
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.mission-card, .rank-card, .intel-card').forEach((el, i) => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(28px) scale(0.97)';
-  el.style.transition = `opacity 0.4s ${i * 0.07}s ease, transform 0.4s ${i * 0.07}s ease`;
-  io.observe(el);
-});
-
-// Nav scroll highlight
-window.addEventListener('scroll', () => {
-  document.querySelector('nav').style.boxShadow =
-    window.scrollY > 50
-      ? 'inset 0 2px 0 rgba(255,255,255,0.3), 0 6px 24px rgba(0,0,0,0.3)'
-      : 'inset 0 2px 0 rgba(255,255,255,0.3), 0 4px 16px rgba(0,0,0,0.2)';
-});
-</script>
-<script>
-  const overlay = document.getElementById('game-overlay');
-  const closeBtn = document.getElementById('close-game');
-  const missionButtons = document.querySelectorAll('.mission-play');
-
-  // Open the overlay
-  missionButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      overlay.classList.remove('hidden');
-      // Logic to load specific game goes here
-    });
-  });
-
-  // Close the overlay
-  closeBtn.addEventListener('click', () => {
-    overlay.classList.add('hidden');
-    // Logic to stop game loop goes here
-  });
-</script>
 <div id="game-overlay" class="hidden">
   <button id="close-game">Quit Mission</button>
   <div id="game-viewport">
     </div>
 </div>
-</body>
 <script>
-  // 1. Select the elements
+  // 1. Join Waitlist Logic
+  function joinWaitlist() {
+    const input = document.getElementById('join-input');
+    const msg = document.getElementById('join-msg');
+    
+    // Simple email validation
+    if (input.value && input.value.includes('@') && input.value.split('@')[1]?.includes('.')) {
+      msg.textContent = 'Transmission received. Your dossier is incoming. Stand by, agent.';
+      input.value = '';
+      input.placeholder = 'Agent registered.';
+      input.disabled = true;
+    } else {
+      input.style.borderColor = 'var(--red)';
+      msg.textContent = 'A valid email is required to establish contact.';
+      setTimeout(() => { input.style.borderColor = ''; msg.textContent = ''; }, 1800);
+    }
+  }
+
+  // Submit on Enter
+  document.getElementById('join-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') joinWaitlist();
+  });
+
+  // 2. Scroll-in Animations
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0) scale(1)';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.mission-card, .rank-card, .intel-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(28px) scale(0.97)';
+    el.style.transition = `opacity 0.4s ${i * 0.07}s ease, transform 0.4s ${i * 0.07}s ease`;
+    io.observe(el);
+  });
+
+  // 3. Game Overlay Toggle (Assuming you have a button to open the game)
+  // Add this if you want to open the overlay:
   const overlay = document.getElementById('game-overlay');
   const closeBtn = document.getElementById('close-game');
-  const missionButtons = document.querySelectorAll('.mission-play');
 
-  // 2. Open the overlay when a mission is clicked
-  missionButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault(); // Stop the link from jumping
-      overlay.classList.remove('hidden');
-      console.log("Mission Initiated!");
-    });
-  });
-
-  // 3. Close the overlay
-  closeBtn.addEventListener('click', () => {
-    overlay.classList.add('hidden');
-  });
-
-  // 4. (Bonus) Close with the Escape key — users love this!
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
+  // Example: Open overlay when clicking "Start Training" (if it had a specific ID/class)
+  // You would need to add an event listener for your trigger button
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
       overlay.classList.add('hidden');
-    }
-  });
+    });
+  }
 </script>
+</body>
 </html>
