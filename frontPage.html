@@ -962,6 +962,41 @@ footer {
   .join-form { flex-direction: column; }
   footer { flex-direction: column; gap: 0.4rem; text-align: center; }
 }
+/* ============================================================
+   GAME OVERLAY
+   ============================================================ */
+#game-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--sky);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#game-overlay.hidden { display: none; }
+#game-viewport { 
+  width: 90vw; 
+  max-width: 800px; 
+  height: 80vh; 
+  background: white; 
+  border-radius: 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+#close-game {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 0.5rem 1rem;
+  background: var(--red);
+  color: white;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  font-family: 'Fredoka One', cursive;
+}
 </style>
 </head>
 <body>
@@ -1001,10 +1036,10 @@ footer {
         <span class="sky-word">Secret</span>
         <span class="green-word"> Squirrel</span>
       </h1>
-      <p class="hero-sub">Bury secrets. Crack codes. Earn your rank.</p>
+      <p class="hero-sub">Be the best squirrel possible and arn your rank.</p>
       <p class="hero-body">
         Four gruelling field tests stand between you and the rank of Legend.
-        Sharpen your instincts, outsmart the Magpie Ring, and prove
+        Sharpen your instincts, grab your acorns, and prove
         you are the ultimate spy squirrel.
       </p>
       <div class="hero-actions">
@@ -1306,5 +1341,57 @@ window.addEventListener('scroll', () => {
       : 'inset 0 2px 0 rgba(255,255,255,0.3), 0 4px 16px rgba(0,0,0,0.2)';
 });
 </script>
+<script>
+  const overlay = document.getElementById('game-overlay');
+  const closeBtn = document.getElementById('close-game');
+  const missionButtons = document.querySelectorAll('.mission-play');
+
+  // Open the overlay
+  missionButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      overlay.classList.remove('hidden');
+      // Logic to load specific game goes here
+    });
+  });
+
+  // Close the overlay
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    // Logic to stop game loop goes here
+  });
+</script>
+<div id="game-overlay" class="hidden">
+  <button id="close-game">Quit Mission</button>
+  <div id="game-viewport">
+    </div>
+</div>
 </body>
+<script>
+  // 1. Select the elements
+  const overlay = document.getElementById('game-overlay');
+  const closeBtn = document.getElementById('close-game');
+  const missionButtons = document.querySelectorAll('.mission-play');
+
+  // 2. Open the overlay when a mission is clicked
+  missionButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault(); // Stop the link from jumping
+      overlay.classList.remove('hidden');
+      console.log("Mission Initiated!");
+    });
+  });
+
+  // 3. Close the overlay
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.add('hidden');
+  });
+
+  // 4. (Bonus) Close with the Escape key — users love this!
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      overlay.classList.add('hidden');
+    }
+  });
+</script>
 </html>
