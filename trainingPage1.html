@@ -172,35 +172,39 @@ function spawnAcorn() {
   }, 4000);
 }
 
-/* CLICK MECHANIC (NEAR CURSOR ONLY) */
+/* CLICK MECHANIC: Acorn vs. Others */
 document.addEventListener("click", () => {
   let bestTarget = null;
-  let bestDistance = 80;
+  let bestDistance = 60; 
 
-  activeAcorns.forEach(acorn => {
-    const rect = acorn.getBoundingClientRect();
-
+  activeAcorns.forEach(item => {
+    const rect = item.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
-
     const dx = x - mouseX;
     const dy = y - mouseY;
-
     const dist = Math.sqrt(dx * dx + dy * dy);
 
     if (dist < bestDistance) {
       bestDistance = dist;
-      bestTarget = acorn;
+      bestTarget = item;
     }
   });
 
   if (bestTarget) {
-    if (bestTarget.classList.contains("great")) score += 5;
-    else score -= 3;
+    // If the item is an Acorn (class 'good')
+    if (bestTarget.classList.contains("good")) {
+      score += 10; // High points for the primary target
+    } 
+    // If the item is any of the other fruits
+    else {
+      score -= 5; // Penalty for grabbing distractions
+    }
 
     bestTarget.remove();
     activeAcorns = activeAcorns.filter(a => a !== bestTarget);
   } else {
+    // Clicking empty space
     score -= 1;
   }
 
