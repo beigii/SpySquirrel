@@ -551,17 +551,6 @@ nav ul a:hover { background: rgba(255,255,255,0.2); }
   box-shadow: 0 12px 0 rgba(0,0,0,0.12), 0 4px 30px rgba(0,0,0,0.15);
 }
 
-.mission-play { 
-  display: block; 
-  width: 100%; 
-  text-align: center; 
-  padding: 0.6rem; 
-  border-radius: 999px; 
-  background: var(--ground); 
-  color: white; 
-  font-family: 'Fredoka One'; 
-  margin-top: 1rem; 
-}
 
 /* Big coloured number in corner */
 .mission-num {
@@ -1159,60 +1148,37 @@ footer {
 <!-- ============================================================
      MISSIONS / TESTS
      ============================================================ -->
-<section id="tests">
-  <div class="tests-inner">
-    <div class="tests-header">
-      <div class="section-tag">Field Training</div>
-      <h2 class="section-title">Choose Your Mission</h2>
-    </div>
+<section id="tests" style="padding: 6rem 2rem;">
+  <div class="tests-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 1200px; margin: 0 auto;">
+    
+    <a href="trainingPage1.html" class="mission-card">
+      <div class="mission-status">1</div>
+      <h3 class="mission-name">Mission 1</h3>
+      <div class="mission-reward">Rookie</div>
+      <p class="mission-desc">Winter is coming, and our reserves are dangerously low. Your task is to maximize caloric intake by gathering as many high-value acorns as possible. Speed and precision are non-negotiable.</p>
+    </a>
 
-    <div class="tests-grid">
+    <a href="trainingPage2.html" class="mission-card">
+      <div class="mission-status">2</div>
+      <h3 class="mission-name">Mission 2</h3>
+      <div class="mission-reward">Agent</div>
+      <p class="mission-desc">Practice your evasion tactics. Every spy must be able to react fast and adapt to every situation.</p>
+    </a>
 
-      <div class="mission-card">
-        <div class="mission-num">1</div>
-        <div class="mission-status">01</div>
-        <h3 class="mission-name">The Great Nut</h3>
-        <span class="mission-reward">Earns: Rookie</span>
-        <p class="mission-desc">
-          Winter is coming, and our reserves are dangerously low. Your task is to maximize caloric intake by gathering as many high-value acorns as possible. Speed and precision are non-negotiable.
-        </p>
-        <a href="#join" class="mission-play">Start Mission</a>
-      </div>
+    <a href="trainingPage3.html" class="mission-card">
+      <div class="mission-status">3</div>
+      <h3 class="mission-name">Mission 3</h3>
+      <div class="mission-reward">Elite</div>
+      <p class="mission-desc">As a spy, you must be able to memorize codes. Hone your photogenic memory with this exercise.</p>
+    </a>
 
-      <div class="mission-card">
-        <div class="mission-num">2</div>
-        <div class="mission-status">02</div>
-        <h3 class="mission-name">Reflex Calibration Test</h3>
-        <span class="mission-reward">Earns: Agent</span>
-        <p class="mission-desc">
-          The ultimate squirrel enemy: The Red Dot. It’s appearing everywhere! Click instantly when you see the laser to dodge the target. Don’t let them catch you!
-        </p>
-        <a href="#join" class="mission-play">Start Mission</a>
-      </div>
+    <a href="trainingPage4.html" class="mission-card">
+      <div class="mission-status">4</div>
+      <h3 class="mission-name">Final</h3>
+      <div class="mission-reward">Legend</div>
+      <p class="mission-desc">The ultimate test of skill.</p>
+    </a>
 
-      <div class="mission-card">
-        <div class="mission-num">3</div>
-        <div class="mission-status">03</div>
-        <h3 class="mission-name">Into The Vault</h3>
-        <span class="mission-reward">Earns: Elite</span>
-        <p class="mission-desc">
-          The enemy's security is adaptive. Begin by cracking simple small digit protocols and push your cognitive limits all the way to the 8-digit Master Keys. How deep into the system can your squirrel brain go?
-        </p>
-        <a href="#join" class="mission-play">Start Mission</a>
-      </div>
-
-      <div class="mission-card">
-        <div class="mission-num">4</div>
-        <div class="mission-status">04</div>
-        <h3 class="mission-name">Mr. Whiskers</h3>
-        <span class="mission-reward">Earns: Legend</span>
-        <p class="mission-desc">
-          The ultimate nemesis has arrived. Mr. Whiskers has been hunting you from the shadows since day one. This is the final stand. One wrong move, and your legend ends here. Are you a snack, or are you an elite spy?
-        </p>
-        <a href="#join" class="mission-play">Start Mission</a>
-      </div>
-
-    </div>
   </div>
 </section>
 
