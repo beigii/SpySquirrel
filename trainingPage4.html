@@ -3,98 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <title>SpySquirrel Mission 4</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
 
 <style>
 :root {
-  --sky: #4ec9f0;
-  --ground: #5dc642;
-  --ground-dark: #3d9e28;
-  --yellow: #ffd832;
-  --red: #ff4444;
-  --panel: rgba(255,255,255,0.95);
+  --sky: #4ec9f0; --ground: #5dc642; --ground-dark: #3d9e28;
+  --yellow: #ffd832; --red: #ff4444; --panel: rgba(255,255,255,0.95);
 }
+body { margin: 0; font-family: 'Nunito', sans-serif; background: var(--sky); overflow: hidden; }
 
-body {
-  margin: 0;
-  font-family: 'Nunito', sans-serif;
-  background: var(--sky);
-}
-
-/* TOP BAR */
 .top-bar {
-  background: var(--ground);
-  border-bottom: 4px solid var(--ground-dark);
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  color: white;
-  font-weight: 800;
+  background: var(--ground); border-bottom: 4px solid var(--ground-dark);
+  display: flex; justify-content: space-between; padding: 1rem 2rem; color: white; font-weight: 800;
 }
+.logo { font-family: 'Fredoka One'; }
 
-.logo {
-  font-family: 'Fredoka One';
-}
+#game { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; gap: 1rem; }
+.title { font-size: 1.5rem; font-weight: 900; }
 
-/* GAME AREA */
-#game {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-  gap: 2rem;
-}
+/* BOSS IMAGE */
+#bossImg { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid white; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-.title {
-  font-size: 1.5rem;
-  font-weight: 900;
-}
-
-/* BARS */
-.bar-container {
-  width: 300px;
-  height: 25px;
-  background: #ddd;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.bar {
-  height: 100%;
-  width: 0%;
-}
-
+.bar-container { width: 300px; height: 25px; background: #ddd; border-radius: 999px; overflow: hidden; }
+.bar { height: 100%; width: 0%; transition: width 0.1s; }
 .player { background: var(--yellow); }
 .enemy { background: var(--red); }
 
-/* END SCREEN */
-#endScreen {
-  position: absolute;
-  inset: 0;
-  display: none;
-  background: rgba(0,0,0,0.5);
-  align-items: center;
-  justify-content: center;
-}
-
-.end-card {
-  background: var(--panel);
-  padding: 2rem 3rem;
-  border-radius: 20px;
-  text-align: center;
-}
-
-button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.5rem;
-  border-radius: 999px;
-  border: none;
-  background: var(--yellow);
-  font-family: 'Fredoka One';
-  cursor: pointer;
-}
+#endScreen { position: absolute; inset: 0; display: none; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
+.end-card { background: var(--panel); padding: 2rem 3rem; border-radius: 20px; text-align: center; }
+button { margin-top: 1rem; padding: 0.6rem 1.5rem; border-radius: 999px; border: none; background: var(--yellow); font-family: 'Fredoka One'; cursor: pointer; }
 </style>
 </head>
 
@@ -105,20 +42,18 @@ button {
 </div>
 
 <div id="game">
+  <img id="bossImg" src="https://i.imgur.com/9IGyEqs.jpg" alt="Boss Cat" />
+  
   <div class="title">SPAM SPACEBAR TO WIN</div>
 
   <div>
     <p>🟡 You</p>
-    <div class="bar-container">
-      <div id="playerBar" class="bar player"></div>
-    </div>
+    <div class="bar-container"><div id="playerBar" class="bar player"></div></div>
   </div>
 
   <div>
-    <p>🔴 Teacher</p>
-    <div class="bar-container">
-      <div id="enemyBar" class="bar enemy"></div>
-    </div>
+    <p>🔴 Boss Cat</p>
+    <div class="bar-container"><div id="enemyBar" class="bar enemy"></div></div>
   </div>
 </div>
 
@@ -126,74 +61,48 @@ button {
   <div class="end-card">
     <h2 id="resultText"></h2>
     <p id="rankText"></p>
-
-    <button onclick="window.location.href='final.html'">
-    View Final Results ➜
-    </button>
+    <button onclick="window.location.href='final.html'">View Final Results ➜</button>
   </div>
 </div>
 
 <script>
 let playerProgress = 0;
 let enemyProgress = 0;
-
 const playerBar = document.getElementById("playerBar");
 const enemyBar = document.getElementById("enemyBar");
-
 let gameOver = false;
 
-/* PLAYER SPAM */
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space" && !gameOver) {
-    playerProgress += 2; // adjust strength here
+    playerProgress += 3; 
     updateBars();
   }
 });
 
-/* ENEMY AUTO PROGRESS */
 setInterval(() => {
   if (gameOver) return;
-
-  enemyProgress += 1 + Math.random() * 1.5;
+  enemyProgress += 0.5 + Math.random() * 1.0;
   updateBars();
 }, 100);
 
-/* UPDATE UI */
 function updateBars() {
   playerBar.style.width = playerProgress + "%";
   enemyBar.style.width = enemyProgress + "%";
 
-  if (playerProgress >= 100) {
-    endGame(true);
-  }
-
-  if (enemyProgress >= 100) {
-    endGame(false);
-  }
+  if (playerProgress >= 100) endGame(true);
+  if (enemyProgress >= 100) endGame(false);
 }
 
-/* END GAME */
 function endGame(win) {
   gameOver = true;
-
   document.getElementById("endScreen").style.display = "flex";
 
-  let rank;
+  let rank = playerProgress > 120 ? "Legend 🔥" : playerProgress > 100 ? "Elite 🟡" : playerProgress > 70 ? "Agent 🔵" : "Rookie 🟢";
 
-  if (playerProgress > 120) rank = "Legend 🔥";
-  else if (playerProgress > 100) rank = "Elite 🟡";
-  else if (playerProgress > 70) rank = "Agent 🔵";
-  else rank = "Rookie 🟢";
-
-  document.getElementById("resultText").textContent =
-    win ? "YOU BEAT THE TEACHER 💀" : "YOU GOT CAUGHT 😭";
-
-  document.getElementById("rankText").textContent =
-    "Final Rank: " + rank;
-
-    localStorage.setItem("mission4Rank", rank);
+  document.getElementById("resultText").textContent = win ? "YOU DEFEATED THE CAT 🐱" : "THE CAT WON 😿";
+  document.getElementById("rankText").textContent = "Final Rank: " + rank;
+  localStorage.setItem("mission4Rank", rank);
 }
 </script>
-
 </body>
 </html>

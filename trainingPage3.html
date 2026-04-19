@@ -3,92 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <title>SpySquirrel Mission 3</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
 
 <style>
 :root {
-  --sky: #4ec9f0;
-  --ground: #5dc642;
-  --ground-dark: #3d9e28;
-  --yellow: #ffd832;
-  --panel: rgba(255,255,255,0.95);
+  --sky: #4ec9f0; --ground: #5dc642; --ground-dark: #3d9e28;
+  --yellow: #ffd832; --panel: rgba(255,255,255,0.95);
 }
+body { margin: 0; font-family: 'Nunito', sans-serif; background: var(--sky); }
 
-body {
-  margin: 0;
-  font-family: 'Nunito', sans-serif;
-  background: var(--sky);
-}
-
-/* TOP BAR */
 .top-bar {
-  background: var(--ground);
-  border-bottom: 4px solid var(--ground-dark);
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  color: white;
-  font-weight: 800;
+  background: var(--ground); border-bottom: 4px solid var(--ground-dark);
+  display: flex; justify-content: space-between; padding: 1rem 2rem; color: white; font-weight: 800;
 }
+.logo { font-family: 'Fredoka One'; }
 
-.logo {
-  font-family: 'Fredoka One';
-}
+#game { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; gap: 1.5rem; position: relative; }
+#sequence { font-size: 3rem; font-weight: 900; letter-spacing: 5px; min-height: 4rem; }
+input { padding: 1rem; font-size: 1.5rem; border-radius: 10px; border: none; text-align: center; width: 300px; }
+button { padding: 0.8rem 2rem; border-radius: 999px; border: none; background: var(--yellow); font-family: 'Fredoka One'; cursor: pointer; font-size: 1.1rem; }
 
-.stats {
-  display: flex;
-  gap: 2rem;
-}
+/* FEEDBACK */
+#feedback-container { display: flex; flex-direction: column; align-items: center; height: 100px; }
+#feedback { font-size: 3rem; display: none; }
+#message { font-size: 1.5rem; font-weight: bold; color: white; margin-top: 10px; }
 
-/* GAME */
-#game {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-  gap: 1.5rem;
-}
-
-#sequence {
-  font-size: 2rem;
-  font-weight: 900;
-}
-
-input {
-  padding: 0.6rem;
-  font-size: 1.2rem;
-  border-radius: 10px;
-  border: none;
-  text-align: center;
-}
-
-button {
-  padding: 0.6rem 1.5rem;
-  border-radius: 999px;
-  border: none;
-  background: var(--yellow);
-  font-family: 'Fredoka One';
-  cursor: pointer;
-}
-
-/* END SCREEN */
-#endScreen {
-  position: absolute;
-  inset: 0;
-  display: none;
-  background: rgba(0,0,0,0.5);
-  align-items: center;
-  justify-content: center;
-}
-
-.end-card {
-  background: var(--panel);
-  padding: 2rem 3rem;
-  border-radius: 20px;
-  text-align: center;
-}
+#endScreen { position: absolute; inset: 0; display: none; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 10; }
+.end-card { background: var(--panel); padding: 2rem 3rem; border-radius: 20px; text-align: center; }
 </style>
 </head>
 
@@ -96,111 +37,112 @@ button {
 
 <div class="top-bar">
   <div class="logo">🐿 Mission 3: Memory Sequence</div>
-  <div class="stats">
-    <div>Level: <span id="level">1</span>/7</div>
-  </div>
+  <div class="stats">Level: <span id="level">1</span>/9</div>
 </div>
 
 <div id="game">
-  <div id="sequence">Memorize...</div>
-  <input id="input" placeholder="Enter sequence" />
-  <button onclick="submitAnswer()">Submit</button>
+  <div id="feedback-container">
+    <div id="feedback">✅</div>
+    <div id="message"></div>
+  </div>
+  <div id="sequence">Ready?</div>
+  <input id="input" placeholder="Enter sequence" disabled />
+  <button id="submitBtn" onclick="submitAnswer()" disabled>Submit</button>
+  <button id="startBtn" onclick="startLevel()">Start Level</button>
 </div>
 
 <div id="endScreen">
   <div class="end-card">
-    <h2 id="rankText"></h2>
+    <h2 id="rankText">Rank: Loading...</h2>
     <p id="resultText"></p>
-
-    <button onclick="window.location.href='trainingPage4.html'">
-      Next Mission ➜
-    </button>
-
+    <button onclick="window.location.href='trainingPage4.html'">Next Mission ➜</button>
     <button onclick="location.reload()">Retry</button>
   </div>
 </div>
 
 <script>
 let level = 1;
-const maxLevel = 7;
-
-let currentSequence = [];
+const maxLevel = 9;
+let currentSequence = "";
 
 const sequenceEl = document.getElementById("sequence");
 const inputEl = document.getElementById("input");
+const submitBtn = document.getElementById("submitBtn");
+const startBtn = document.getElementById("startBtn");
 const levelEl = document.getElementById("level");
+const feedbackEl = document.getElementById("feedback");
+const messageEl = document.getElementById("message");
 
-/* GENERATE RANDOM SEQUENCE */
-function generateSequence(length) {
-  let seq = [];
-  for (let i = 0; i < length; i++) {
-    seq.push(Math.floor(Math.random() * 10)); // 0-9
-  }
-  return seq;
-}
-
-/* START ROUND */
 function startLevel() {
+  startBtn.style.display = "none";
   inputEl.value = "";
   inputEl.disabled = true;
+  submitBtn.disabled = true;
+  sequenceEl.textContent = "Memorize...";
 
-  currentSequence = generateSequence(level);
-
-  sequenceEl.textContent = currentSequence.join(" ");
-
-  // show briefly then hide
+  currentSequence = Array.from({length: level}, () => Math.floor(Math.random() * 10)).join("");
+  
+  // Pause before showing
   setTimeout(() => {
-    sequenceEl.textContent = "Enter the sequence";
-    inputEl.disabled = false;
-    inputEl.focus();
-  }, 1500 + level * 300);
+    sequenceEl.textContent = currentSequence;
+    
+    // Hide after duration
+    setTimeout(() => {
+      sequenceEl.textContent = "Enter sequence";
+      inputEl.disabled = false;
+      inputEl.focus();
+      submitBtn.disabled = false;
+    }, 1000 + (level * 400));
+  }, 500);
 }
 
-/* CHECK ANSWER */
 function submitAnswer() {
   const userInput = inputEl.value.trim();
 
-  const correct = currentSequence.join("");
+  if (userInput === currentSequence) {
+    // Correct!
+    submitBtn.disabled = true;
+    inputEl.disabled = true;
+    sequenceEl.textContent = ""; 
+    feedbackEl.style.display = "block";
+    messageEl.textContent = "Correct!";
 
-  if (userInput === correct) {
-    level++;
-
-    if (level > maxLevel) {
-      endGame(true);
-    } else {
-      levelEl.textContent = level;
-      startLevel();
-    }
+    setTimeout(() => {
+      feedbackEl.style.display = "none";
+      messageEl.textContent = "";
+      
+      if (level < maxLevel) {
+        level++;
+        levelEl.textContent = level;
+        startLevel();
+      } else {
+        endGame(true);
+      }
+    }, 1000); // 1 second pause to enjoy the "Correct!" message
+    
   } else {
     endGame(false);
   }
 }
 
-/* END GAME */
 function endGame(success) {
   document.getElementById("endScreen").style.display = "flex";
-
+  
+  // Logic: <4 Rookie, <6 Agent, <8 Elite, else Legend
+  // If they finished level 9 successfully, they are level 9.
   let rank;
-
-  if (level <= 2) rank = "Rookie 🟢";
-  else if (level <= 4) rank = "Agent 🔵";
-  else if (level <= 6) rank = "Elite 🟡";
+  if (level < 4) rank = "Rookie 🟢";
+  else if (level < 6) rank = "Agent 🔵";
+  else if (level < 8) rank = "Elite 🟡";
   else rank = "Legend 🔥";
 
-  document.getElementById("rankText").textContent =
-    "Mission 3 Complete: " + rank;
+  document.getElementById("rankText").textContent = "Rank: " + rank;
+  document.getElementById("resultText").textContent = success 
+    ? "Perfect recall! You mastered Level 9." 
+    : "Access Denied. You reached Level " + level + ".";
 
-  document.getElementById("resultText").textContent =
-    success
-      ? "Perfect memory! You completed all levels."
-      : "You reached level " + (level - 1);
-
-    localStorage.setItem("mission3Rank", rank);
+  localStorage.setItem("mission3Rank", rank);
 }
-
-/* INIT */
-startLevel();
 </script>
-
 </body>
 </html>
