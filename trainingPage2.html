@@ -3,104 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <title>SpySquirrel Mission 2</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
 
 <style>
 :root {
-  --sky: #4ec9f0;
-  --ground: #5dc642;
-  --ground-dark: #3d9e28;
-
-  --yellow: #ffd832;
-  --red: #ff4444;
-  --green: #2ecc71;
-
+  --sky: #4ec9f0; --ground: #5dc642; --ground-dark: #3d9e28;
+  --yellow: #ffd832; --red: #ff4444; --green: #2ecc71;
   --panel: rgba(255,255,255,0.95);
 }
+body { margin: 0; font-family: 'Nunito', sans-serif; background: var(--sky); overflow: hidden; }
 
-body {
-  margin: 0;
-  font-family: 'Nunito', sans-serif;
-  background: var(--sky);
-  overflow: hidden;
-}
-
-/* TOP BAR */
-.top-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  background: var(--ground);
-  border-bottom: 4px solid var(--ground-dark);
-
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-
-  color: white;
-  font-weight: 800;
-}
-
-.logo {
-  font-family: 'Fredoka One';
-}
-
-.stats {
-  display: flex;
-  gap: 2rem;
-}
-
-/* GAME AREA */
-#game {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* LAYOUT */
+.top-bar { position: fixed; top: 0; left: 0; right: 0; background: var(--ground); border-bottom: 4px solid var(--ground-dark); display: flex; justify-content: space-between; padding: 1rem 2rem; color: white; font-weight: 800; }
+#game { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; }
 
 /* REACTION BOX */
-#box {
-  width: 200px;
-  height: 200px;
-  background: var(--red);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  color: white;
-  cursor: pointer;
-}
+#box { width: 200px; height: 200px; background: var(--red); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; cursor: pointer; user-select: none; }
+
+/* START SCREEN OVERLAY */
+#startScreen { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; }
 
 /* END SCREEN */
-#endScreen {
-  position: absolute;
-  inset: 0;
-  display: none;
-  background: rgba(0,0,0,0.5);
-  align-items: center;
-  justify-content: center;
-}
-
-.end-card {
-  background: var(--panel);
-  padding: 2rem 3rem;
-  border-radius: 20px;
-  text-align: center;
-}
-
-button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.5rem;
-  border: none;
-  border-radius: 999px;
-  background: var(--yellow);
-  font-family: 'Fredoka One';
-  cursor: pointer;
-}
+#endScreen { position: absolute; inset: 0; display: none; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 20; }
+.card { background: var(--panel); padding: 2rem 3rem; border-radius: 20px; text-align: center; }
+button { margin-top: 1rem; padding: 0.8rem 2rem; border: none; border-radius: 999px; background: var(--yellow); font-family: 'Fredoka One'; cursor: pointer; font-size: 1.2rem; }
 </style>
 </head>
 
@@ -115,18 +41,17 @@ button {
 </div>
 
 <div id="game">
+  <div id="startScreen">
+    <button onclick="startGame()">Start Mission</button>
+  </div>
   <div id="box">Wait...</div>
 </div>
 
 <div id="endScreen">
-  <div class="end-card">
+  <div class="card">
     <h2 id="rankText"></h2>
     <p id="avgTime"></p>
-
-    <button onclick="window.location.href='trainingPage3.html'">
-      Next Mission ➜
-    </button>
-
+    <button onclick="window.location.href='trainingPage3.html'">Next Mission ➜</button>
     <button onclick="location.reload()">Retry</button>
   </div>
 </div>
@@ -134,17 +59,22 @@ button {
 <script>
 let round = 1;
 const maxRounds = 5;
-
 let startTime = 0;
 let waiting = true;
-
-let reactionTimes = [];
+let gameActive = false;
+let timeoutId; // To track the 'green' switch timer
 
 const box = document.getElementById("box");
 const roundEl = document.getElementById("round");
 const lastEl = document.getElementById("last");
+const startScreen = document.getElementById("startScreen");
 
-/* START ROUND */
+function startGame() {
+  startScreen.style.display = "none";
+  gameActive = true;
+  startRound();
+}
+
 function startRound() {
   waiting = true;
   box.style.background = "#ff4444";
@@ -152,7 +82,8 @@ function startRound() {
 
   const delay = 1000 + Math.random() * 2000;
 
-  setTimeout(() => {
+  // Store the timeout ID so we can cancel it if they click early!
+  timeoutId = setTimeout(() => {
     box.style.background = "#2ecc71";
     box.textContent = "CLICK!";
     waiting = false;
@@ -160,18 +91,31 @@ function startRound() {
   }, delay);
 }
 
-/* CLICK HANDLER */
 box.addEventListener("click", () => {
+  if (!gameActive) return;
+
   if (waiting) {
-    box.textContent = "Too Early!";
+    // ANTI-CHEAT: Cancel the green light, show penalty
+    clearTimeout(timeoutId);
+    box.textContent = "TOO EARLY!";
+    box.style.background = "#555";
+    
+    // Disable game for 1.5 seconds as a penalty
+    gameActive = false; 
+    setTimeout(() => {
+      gameActive = true;
+      startRound();
+    }, 1500);
     return;
   }
 
+  // VALID CLICK
   const reaction = Math.floor(performance.now() - startTime);
+  let reactionTimes = JSON.parse(localStorage.getItem("m2Times") || "[]");
   reactionTimes.push(reaction);
+  localStorage.setItem("m2Times", JSON.stringify(reactionTimes));
 
   lastEl.textContent = reaction;
-
   round++;
 
   if (round > maxRounds) {
@@ -182,33 +126,16 @@ box.addEventListener("click", () => {
   }
 });
 
-/* END GAME */
 function endGame() {
   document.getElementById("endScreen").style.display = "flex";
+  let times = JSON.parse(localStorage.getItem("m2Times"));
+  const avg = Math.floor(times.reduce((a, b) => a + b, 0) / times.length);
 
-  const avg = Math.floor(
-    reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length
-  );
-
-  let rank;
-
-  if (avg < 200) rank = "Legend 🔥";
-  else if (avg < 300) rank = "Elite 🟡";
-  else if (avg < 400) rank = "Agent 🔵";
-  else rank = "Rookie 🟢";
-
-  document.getElementById("rankText").textContent =
-    "Mission 2 Complete: " + rank;
-
-  document.getElementById("avgTime").textContent =
-    "Average Reaction: " + avg + " ms";
-    
-    localStorage.setItem("mission2Rank", rank);
+  let rank = avg < 275 ? "Legend 🔥" : avg < 325 ? "Elite 🟡" : avg < 375 ? "Agent 🔵" : "Rookie 🟢";
+  document.getElementById("rankText").textContent = "Mission 2 Complete: " + rank;
+  document.getElementById("avgTime").textContent = "Average Reaction: " + avg + " ms";
+  localStorage.removeItem("m2Times");
 }
-
-/* INIT */
-startRound();
 </script>
-
 </body>
 </html>
