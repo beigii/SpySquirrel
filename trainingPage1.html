@@ -11,33 +11,7 @@
   --sky: #4ec9f0;
   --ground: #5dc642;
   --ground-dark: #3d9e28;
-}
-/* Update the base acorn class */
-.acorn {
-  position: absolute;
-  width: 50px; /* Slightly bigger looks better for images */
-  height: 50px;
-  animation: fall linear forwards;
-  
-  /* These settings make sure your image doesn't stretch or repeat */
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 0; /* Remove the circle shape now that we have images */
-}
-
-/* Now, paste your specific Imgur links here */
- .good { 
-  background-image: url('https://i.imgur.com/9kTehmS.png'); 
-}
-.great { 
-  background-image: url('https://i.imgur.com/qKaL88q.png'); 
-}
-.legendary { 
-  background-image: url('https://i.imgur.com/PCjURUI.png'); 
-}
-.bad { 
-  background-image: url('https://i.imgur.com/YhJBtj4.png'); 
+  --panel: rgba(255,255,255,0.95);
 }
 
 body {
@@ -62,38 +36,36 @@ body {
   z-index: 10;
 }
 
-.logo {
-  font-family: 'Fredoka One';
-  font-size: 1.3rem;
+/* THE FIX: Unified Acorn Class */
+.acorn {
+  position: absolute;
+  width: 60px; 
+  height: 60px;
+  animation: fall linear forwards;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 2;
+  /* Remove border-radius and background-color so images show */
+  border-radius: 0; 
+  background-color: transparent; 
 }
 
-.stats {
-  display: flex;
-  gap: 2rem;
+/* THE FIX: Direct Imgur Links (.png added) */
+.good { background-image: url('https://i.imgur.com/9kTehmS.png'); }      /* Acorn */
+.great { background-image: url('https://i.imgur.com/qKaL88q.png'); }     /* Banana */
+.legendary { background-image: url('https://i.imgur.com/PCjURUI.png'); } /* Orange */
+.bad { background-image: url('https://i.imgur.com/YhJBtj4.png'); }       /* Apple */
+
+@keyframes fall {
+  from { transform: translateY(-50px); }
+  to { transform: translateY(110vh); }
 }
 
 #game {
   position: relative;
   height: 100vh;
   width: 100%;
-}
-
-.acorn {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  animation: fall linear forwards;
-}
-
-.good { background: #ffd832; }
-.great { background: #ff7b24; }
-.legendary { background: #9b59f7; }
-.bad { background: #ff4444; }
-
-@keyframes fall {
-  from { transform: translateY(-50px); }
-  to { transform: translateY(110vh); }
 }
 
 #endScreen {
@@ -103,6 +75,7 @@ body {
   background: rgba(0,0,0,0.5);
   align-items: center;
   justify-content: center;
+  z-index: 20;
 }
 
 .end-card {
