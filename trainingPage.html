@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SpySquirrel Training</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --sky: #4ec9f0;
+  --ground: #5dc642;
+  --ground-dark: #3d9e28;
+
+  --yellow: #ffd832;
+  --orange: #ff7b24;
+  --red: #ff4444;
+  --purple: #9b59f7;
+
+  --panel: rgba(255,255,255,0.95);
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  background: var(--sky);
+  overflow: hidden;
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--ground);
+  border-bottom: 4px solid var(--ground-dark);
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  color: white;
+  font-weight: 800;
+  z-index: 10;
+}
+
+.logo {
+  font-family: 'Fredoka One';
+  font-size: 1.3rem;
+}
+
+.stats {
+  display: flex;
+  gap: 2rem;
+}
+
+#game {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
+.acorn {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  animation: fall linear forwards;
+}
+
+.good { background: #ffd832; }
+.great { background: #ff7b24; }
+.legendary { background: #9b59f7; }
+.bad { background: #ff4444; }
+
+@keyframes fall {
+  from { transform: translateY(-50px); }
+  to { transform: translateY(110vh); }
+}
+
+#endScreen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.end-card {
+  background: var(--panel);
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+}
+
+button {
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background: #ffd832;
+  font-family: 'Fredoka One';
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <div class="logo">🐿 SpySquirrel Training</div>
+  <div class="stats">
+    <div>Score: <span id="score">0</span></div>
+    <div>Time: <span id="time">30</span>s</div>
+    <div>Mission: <span id="mission">1</span></div>
+  </div>
+</div>
+
+<div id="game"></div>
+
+<div id="endScreen">
+  <div class="end-card">
+    <h2 id="rankText">Agent Rank</h2>
+    <p id="finalScore"></p>
+
+    <button onclick="nextMission()">Next Mission ➜</button>
+    <button onclick="location.reload()">Restart</button>
+  </div>
+</div>
+
+<script>
+let score = 0;
+let time = 30;
+let mission = 1;
+
+const scoreEl = document.getElementById("score");
+const timeEl = document.getElementById("time");
+const missionEl = document.getElementById("mission");
+const game = document.getElementById("game");
+
+let activeAcorns = [];
+
+let spawnInterval;
+let timerInterval;
+
+let mouseX = 0;
+let mouseY = 0;
+
+/* CURSOR TRACKING */
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+/* SPAWN ACORNS */
+function spawnAcorn() {
+  const acorn = document.createElement("div");
+  acorn.classList.add("acorn");
+
+  const rand = Math.random();
+
+  if (rand < 0.25) acorn.classList.add("great");
+  else if (rand < 0.5) acorn.classList.add("good");
+  else if (rand < 0.75) acorn.classList.add("legendary");
+  else acorn.classList.add("bad");
+
+  acorn.style.left = Math.random() * 95 + "%";
+  acorn.style.animationDuration = (2 + Math.random() * 2) + "s";
+
+  game.appendChild(acorn);
+  activeAcorns.push(acorn);
+
+  setTimeout(() => {
+    acorn.remove();
+    activeAcorns = activeAcorns.filter(a => a !== acorn);
+  }, 4000);
+}
+
+/* CLICK MECHANIC (NEAR CURSOR ONLY) */
+document.addEventListener("click", () => {
+  let bestTarget = null;
+  let bestDistance = 80;
+
+  activeAcorns.forEach(acorn => {
+    const rect = acorn.getBoundingClientRect();
+
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    const dx = x - mouseX;
+    const dy = y - mouseY;
+
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < bestDistance) {
+      bestDistance = dist;
+      bestTarget = acorn;
+    }
+  });
+
+  if (bestTarget) {
+    if (bestTarget.classList.contains("great")) score += 5;
+    else score -= 3;
+
+    bestTarget.remove();
+    activeAcorns = activeAcorns.filter(a => a !== bestTarget);
+  } else {
+    score -= 1;
+  }
+
+  scoreEl.textContent = score;
+});
+
+/* TIMER */
+function startTimer() {
+  timerInterval = setInterval(() => {
+    time--;
+    timeEl.textContent = time;
+
+    if (time <= 0) {
+      clearInterval(timerInterval);
+      clearInterval(spawnInterval);
+      endGame();
+    }
+  }, 1000);
+}
+
+/* START SPAWNING */
+function startSpawning() {
+  clearInterval(spawnInterval);
+  spawnInterval = setInterval(() => {
+    spawnAcorn();
+  }, Math.max(200, 500 - mission * 40));
+}
+
+/* END GAME */
+function endGame() {
+  document.getElementById("endScreen").style.display = "flex";
+
+  let rank;
+
+  if (score < 10) rank = "Rookie 🟢";
+  else if (score < 25) rank = "Agent 🔵";
+  else if (score < 40) rank = "Elite 🟡";
+  else rank = "Legend 🔥";
+
+  document.getElementById("rankText").textContent =
+    "Mission " + mission + " Complete: " + rank;
+
+  document.getElementById("finalScore").textContent =
+    "Score: " + score;
+}
+
+/* NEXT MISSION */
+function nextMission() {
+  mission++;
+
+  document.getElementById("endScreen").style.display = "none";
+
+  score = 0;
+  time = 30;
+
+  scoreEl.textContent = score;
+  timeEl.textContent = time;
+  missionEl.textContent = mission;
+
+  activeAcorns.forEach(a => a.remove());
+  activeAcorns = [];
+
+  startSpawning();
+  startTimer();
+}
+
+/* INIT */
+startSpawning();
+startTimer();
+</script>
+
+</body>
+</html>
