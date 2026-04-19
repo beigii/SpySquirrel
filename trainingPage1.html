@@ -240,8 +240,8 @@ function endGame() {
   let rank;
 
   if (score < 10) rank = "Rookie 🟢";
-  else if (score < 25) rank = "Agent 🔵";
-  else if (score < 40) rank = "Elite 🟡";
+  else if (score < 40) rank = "Agent 🔵";
+  else if (score < 90) rank = "Elite 🟡";
   else rank = "Legend 🔥";
 
   document.getElementById("rankText").textContent =
