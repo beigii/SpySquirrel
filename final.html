@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SpySquirrel Final Results</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --sky: #4ec9f0;
+  --ground: #5dc642;
+  --ground-dark: #3d9e28;
+  --yellow: #ffd832;
+  --panel: rgba(255,255,255,0.95);
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  background: var(--sky);
+}
+
+/* TOP */
+.top-bar {
+  background: var(--ground);
+  border-bottom: 4px solid var(--ground-dark);
+  padding: 1rem 2rem;
+  color: white;
+  font-weight: 800;
+  font-family: 'Fredoka One';
+}
+
+/* CENTER */
+#game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 85vh;
+}
+
+.card {
+  background: var(--panel);
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 1rem;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--yellow);
+  font-family: 'Fredoka One';
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  🐿 Final Evaluation
+</div>
+
+<div id="game">
+  <div class="card">
+    <h2 id="finalRank"></h2>
+
+    <p id="breakdown"></p>
+
+    <button onclick="window.location.href='frontpage.html'">Home</button>
+  </div>
+</div>
+
+<script>
+/* GET RANKS */
+const ranks = [
+  localStorage.getItem("mission1Rank"),
+  localStorage.getItem("mission2Rank"),
+  localStorage.getItem("mission3Rank"),
+  localStorage.getItem("mission4Rank")
+];
+
+/* CONVERT RANK TO SCORE */
+function rankToScore(rank) {
+  if (!rank) return 0;
+  if (rank.includes("Rookie")) return 1;
+  if (rank.includes("Agent")) return 2;
+  if (rank.includes("Elite")) return 3;
+  if (rank.includes("Legend")) return 4;
+  return 0;
+}
+
+/* CALCULATE TOTAL */
+let total = 0;
+ranks.forEach(r => total += rankToScore(r));
+
+const avg = total / 4;
+
+/* FINAL RANK */
+let finalRank;
+
+if (avg < 1.5) finalRank = "Rookie 🟢";
+else if (avg < 2.5) finalRank = "Agent 🔵";
+else if (avg < 3.5) finalRank = "Elite 🟡";
+else finalRank = "Legend 🔥";
+
+/* DISPLAY */
+document.getElementById("finalRank").textContent =
+  "Final Rank: " + finalRank;
+
+document.getElementById("breakdown").textContent =
+  "M1: " + (ranks[0] || "-") + " | " +
+  "M2: " + (ranks[1] || "-") + " | " +
+  "M3: " + (ranks[2] || "-") + " | " +
+  "M4: " + (ranks[3] || "-");
+
+/* RESTART */
+function restartGame() {
+  localStorage.clear();
+  window.location.href = "index.html"; // your home page
+}
+</script>
+
+</body>
+</html>

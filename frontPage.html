@@ -1043,7 +1043,7 @@ footer {
         you are the ultimate spy squirrel.
       </p>
       <div class="hero-actions">
-        <a href="#tests" class="game-btn game-btn-go">Start Training</a>
+        <a href="#tests" onclick="window.location.href='trainingPage1.html'" class="game-btn game-btn-go">Start Training</a>
         <a href="#ranks" class="game-btn game-btn-yellow">View Ranks</a>
       </div>
     </div>
@@ -1357,6 +1357,7 @@ document.querySelectorAll('.game-btn-go, .nav-cta').forEach(button => {
 
   // Example: Open overlay when clicking "Start Training" (if it had a specific ID/class)
   // You would need to add an event listener for your trigger button
+  
   
   if (closeBtn) {
     closeBtn.addEventListener('click', () => {

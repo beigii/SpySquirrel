@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SpySquirrel Mission 2</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --sky: #4ec9f0;
+  --ground: #5dc642;
+  --ground-dark: #3d9e28;
+
+  --yellow: #ffd832;
+  --red: #ff4444;
+  --green: #2ecc71;
+
+  --panel: rgba(255,255,255,0.95);
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  background: var(--sky);
+  overflow: hidden;
+}
+
+/* TOP BAR */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  background: var(--ground);
+  border-bottom: 4px solid var(--ground-dark);
+
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+
+  color: white;
+  font-weight: 800;
+}
+
+.logo {
+  font-family: 'Fredoka One';
+}
+
+.stats {
+  display: flex;
+  gap: 2rem;
+}
+
+/* GAME AREA */
+#game {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* REACTION BOX */
+#box {
+  width: 200px;
+  height: 200px;
+  background: var(--red);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: white;
+  cursor: pointer;
+}
+
+/* END SCREEN */
+#endScreen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+
+.end-card {
+  background: var(--panel);
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--yellow);
+  font-family: 'Fredoka One';
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <div class="logo">🐿 Mission 2: Reaction Test</div>
+  <div class="stats">
+    <div>Round: <span id="round">1</span>/5</div>
+    <div>Last: <span id="last">0</span> ms</div>
+  </div>
+</div>
+
+<div id="game">
+  <div id="box">Wait...</div>
+</div>
+
+<div id="endScreen">
+  <div class="end-card">
+    <h2 id="rankText"></h2>
+    <p id="avgTime"></p>
+
+    <button onclick="window.location.href='trainingPage3.html'">
+      Next Mission ➜
+    </button>
+
+    <button onclick="location.reload()">Retry</button>
+  </div>
+</div>
+
+<script>
+let round = 1;
+const maxRounds = 5;
+
+let startTime = 0;
+let waiting = true;
+
+let reactionTimes = [];
+
+const box = document.getElementById("box");
+const roundEl = document.getElementById("round");
+const lastEl = document.getElementById("last");
+
+/* START ROUND */
+function startRound() {
+  waiting = true;
+  box.style.background = "#ff4444";
+  box.textContent = "Wait...";
+
+  const delay = 1000 + Math.random() * 2000;
+
+  setTimeout(() => {
+    box.style.background = "#2ecc71";
+    box.textContent = "CLICK!";
+    waiting = false;
+    startTime = performance.now();
+  }, delay);
+}
+
+/* CLICK HANDLER */
+box.addEventListener("click", () => {
+  if (waiting) {
+    box.textContent = "Too Early!";
+    return;
+  }
+
+  const reaction = Math.floor(performance.now() - startTime);
+  reactionTimes.push(reaction);
+
+  lastEl.textContent = reaction;
+
+  round++;
+
+  if (round > maxRounds) {
+    endGame();
+  } else {
+    roundEl.textContent = round;
+    startRound();
+  }
+});
+
+/* END GAME */
+function endGame() {
+  document.getElementById("endScreen").style.display = "flex";
+
+  const avg = Math.floor(
+    reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length
+  );
+
+  let rank;
+
+  if (avg < 200) rank = "Legend 🔥";
+  else if (avg < 300) rank = "Elite 🟡";
+  else if (avg < 400) rank = "Agent 🔵";
+  else rank = "Rookie 🟢";
+
+  document.getElementById("rankText").textContent =
+    "Mission 2 Complete: " + rank;
+
+  document.getElementById("avgTime").textContent =
+    "Average Reaction: " + avg + " ms";
+    
+    localStorage.setItem("mission2Rank", rank);
+}
+
+/* INIT */
+startRound();
+</script>
+
+</body>
+</html>

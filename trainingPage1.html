@@ -123,7 +123,9 @@ button {
     <h2 id="rankText">Agent Rank</h2>
     <p id="finalScore"></p>
 
-    <button onclick="nextMission()">Next Mission ➜</button>
+    <button onclick="window.location.href='trainingPage2.html'">
+      Next Mission ➜
+    </button>
     <button onclick="location.reload()">Restart</button>
   </div>
 </div>
@@ -249,6 +251,8 @@ function endGame() {
 
   document.getElementById("finalScore").textContent =
     "Score: " + score;
+
+    localStorage.setItem("mission1Rank", rank);
 }
 
 /* NEXT MISSION */
