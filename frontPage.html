@@ -1036,7 +1036,7 @@ footer {
         <span class="sky-word">Secret</span>
         <span class="green-word"> Squirrel</span>
       </h1>
-      <p class="hero-sub">Be the best squirrel possible and arn your rank.</p>
+      <p class="hero-sub">Be the best squirrel possible and earn your rank.</p>
       <p class="hero-body">
         Four gruelling field tests stand between you and the rank of Legend.
         Sharpen your instincts, grab your acorns, and prove
@@ -1152,10 +1152,10 @@ footer {
       <div class="mission-card">
         <div class="mission-num">1</div>
         <div class="mission-status">01</div>
-        <h3 class="mission-name">The Acorn Cipher</h3>
+        <h3 class="mission-name">The Great Nut</h3>
         <span class="mission-reward">Earns: Rookie</span>
         <p class="mission-desc">
-          Decrypt messages buried in autumn leaves. Classic substitution ciphers — the first nut every agent must crack.
+          Winter is coming, and our reserves are dangerously low. Your task is to maximize caloric intake by gathering as many high-value acorns as possible. Speed and precision are non-negotiable.
         </p>
         <a href="#join" class="mission-play">Start Mission</a>
       </div>
@@ -1163,10 +1163,10 @@ footer {
       <div class="mission-card">
         <div class="mission-num">2</div>
         <div class="mission-status">02</div>
-        <h3 class="mission-name">Surveillance Sprint</h3>
+        <h3 class="mission-name">Reflex Calibration Test</h3>
         <span class="mission-reward">Earns: Agent</span>
         <p class="mission-desc">
-          Spot the mole. A pattern-matching memory game under a strict time limit. Blink and you fail.
+          The ultimate squirrel enemy: The Red Dot. It’s appearing everywhere! Click instantly when you see the laser to dodge the target. Don’t let them catch you!
         </p>
         <a href="#join" class="mission-play">Start Mission</a>
       </div>
@@ -1174,10 +1174,10 @@ footer {
       <div class="mission-card">
         <div class="mission-num">3</div>
         <div class="mission-status">03</div>
-        <h3 class="mission-name">Dead Drop Network</h3>
+        <h3 class="mission-name">Into The Vault</h3>
         <span class="mission-reward">Earns: Elite</span>
         <p class="mission-desc">
-          Navigate an encrypted network of buried intel drops. Find the real message before the trail goes cold.
+          The enemy's security is adaptive. Begin by cracking simple small digit protocols and push your cognitive limits all the way to the 8-digit Master Keys. How deep into the system can your squirrel brain go?
         </p>
         <a href="#join" class="mission-play">Start Mission</a>
       </div>
@@ -1185,10 +1185,10 @@ footer {
       <div class="mission-card">
         <div class="mission-num">4</div>
         <div class="mission-status">04</div>
-        <h3 class="mission-name">Double Agent Protocol</h3>
+        <h3 class="mission-name">Mr. Whiskers</h3>
         <span class="mission-reward">Earns: Legend</span>
         <p class="mission-desc">
-          The final test. Separate truth from deception. Only the sharpest agents reach Legend rank.
+          The ultimate nemesis has arrived. Mr. Whiskers has been hunting you from the shadows since day one. This is the final stand. One wrong move, and your legend ends here. Are you a snack, or are you an elite spy?
         </p>
         <a href="#join" class="mission-play">Start Mission</a>
       </div>
@@ -1285,113 +1285,84 @@ footer {
      ============================================================ -->
 <footer>
   <div class="footer-logo">SpySquirrel</div>
-  <p class="footer-copy">&copy; 2025 SpySquirrel — Hackathon Edition</p>
+  <p class="footer-copy">&copy; 2026 SpySquirrel — Hackathon Edition</p>
 </footer>
 
 <!-- ============================================================
      SCRIPTS
      ============================================================ -->
-<script>
-// Waitlist form submission
-function joinWaitlist() {
-  const input = document.getElementById('join-input');
-  const msg   = document.getElementById('join-msg');
-  const val   = input.value.trim();
 
-  if (val.includes('@') && val.split('@')[1]?.includes('.')) {
-    msg.textContent = 'Transmission received. Your dossier is incoming. Stand by, agent.';
-    input.value = '';
-    input.placeholder = 'Agent registered.';
-    input.disabled = true;
-  } else {
-    input.style.borderColor = 'var(--red)';
-    msg.textContent = 'A valid email is required to establish contact.';
-    setTimeout(() => { input.style.borderColor = ''; msg.textContent = ''; }, 1800);
-  }
-}
-
-// Enter key submits
-document.getElementById('join-input')?.addEventListener('keydown', e => {
-  if (e.key === 'Enter') joinWaitlist();
-});
-
-// Scroll-in animations using IntersectionObserver
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.style.opacity = '1';
-      e.target.style.transform = 'translateY(0) scale(1)';
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.mission-card, .rank-card, .intel-card').forEach((el, i) => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(28px) scale(0.97)';
-  el.style.transition = `opacity 0.4s ${i * 0.07}s ease, transform 0.4s ${i * 0.07}s ease`;
-  io.observe(el);
-});
-
-// Nav scroll highlight
-window.addEventListener('scroll', () => {
-  document.querySelector('nav').style.boxShadow =
-    window.scrollY > 50
-      ? 'inset 0 2px 0 rgba(255,255,255,0.3), 0 6px 24px rgba(0,0,0,0.3)'
-      : 'inset 0 2px 0 rgba(255,255,255,0.3), 0 4px 16px rgba(0,0,0,0.2)';
-});
-</script>
-<script>
-  const overlay = document.getElementById('game-overlay');
-  const closeBtn = document.getElementById('close-game');
-  const missionButtons = document.querySelectorAll('.mission-play');
-
-  // Open the overlay
-  missionButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      overlay.classList.remove('hidden');
-      // Logic to load specific game goes here
-    });
-  });
-
-  // Close the overlay
-  closeBtn.addEventListener('click', () => {
-    overlay.classList.add('hidden');
-    // Logic to stop game loop goes here
-  });
-</script>
 <div id="game-overlay" class="hidden">
-  <button id="close-game">Quit Mission</button>
-  <div id="game-viewport">
-    </div>
+  <button id="close-game">Close</button>
 </div>
-</body>
+</div>
 <script>
-  // 1. Select the elements
-  const overlay = document.getElementById('game-overlay');
-  const closeBtn = document.getElementById('close-game');
-  const missionButtons = document.querySelectorAll('.mission-play');
-
-  // 2. Open the overlay when a mission is clicked
-  missionButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault(); // Stop the link from jumping
+// Add this to prevent the jump and open the game
+document.querySelectorAll('.game-btn-go, .nav-cta').forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.preventDefault(); // <--- This prevents the browser from jumping
+    
+    // Now open the game
+    const overlay = document.getElementById('game-overlay');
+    if (overlay) {
       overlay.classList.remove('hidden');
-      console.log("Mission Initiated!");
-    });
-  });
-
-  // 3. Close the overlay
-  closeBtn.addEventListener('click', () => {
-    overlay.classList.add('hidden');
-  });
-
-  // 4. (Bonus) Close with the Escape key — users love this!
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      overlay.classList.add('hidden');
     }
   });
+});
+  // 1. Join Waitlist Logic
+  function joinWaitlist() {
+    const input = document.getElementById('join-input');
+    const msg = document.getElementById('join-msg');
+    
+    // Simple email validation
+    if (input.value && input.value.includes('@') && input.value.split('@')[1]?.includes('.')) {
+      msg.textContent = 'Transmission received. Your dossier is incoming. Stand by, agent.';
+      input.value = '';
+      input.placeholder = 'Agent registered.';
+      input.disabled = true;
+    } else {
+      input.style.borderColor = 'var(--red)';
+      msg.textContent = 'A valid email is required to establish contact.';
+      setTimeout(() => { input.style.borderColor = ''; msg.textContent = ''; }, 1800);
+    }
+  }
+
+  // Submit on Enter
+  document.getElementById('join-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') joinWaitlist();
+  });
+
+  // 2. Scroll-in Animations
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0) scale(1)';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.mission-card, .rank-card, .intel-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(28px) scale(0.97)';
+    el.style.transition = `opacity 0.4s ${i * 0.07}s ease, transform 0.4s ${i * 0.07}s ease`;
+    io.observe(el);
+  });
+
+  // 3. Game Overlay Toggle (Assuming you have a button to open the game)
+  // Add this if you want to open the overlay:
+  const overlay = document.getElementById('game-overlay');
+  const closeBtn = document.getElementById('close-game');
+
+  // Example: Open overlay when clicking "Start Training" (if it had a specific ID/class)
+  // You would need to add an event listener for your trigger button
+  
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+    });
+  }
 </script>
+</body>
 </html>
