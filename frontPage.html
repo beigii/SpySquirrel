@@ -533,16 +533,35 @@ nav ul a:hover { background: rgba(255,255,255,0.2); }
 }
 
 /* Mission card */
-.mission-card {
-  background: var(--white);
-  border-radius: 24px;
-  padding: 2rem 1.5rem 1.5rem;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s;
-  cursor: pointer;
+/* Updated Mission Card Styles */
+.mission-card { 
+  background: white; 
+  border-radius: 24px; 
+  padding: 2rem; 
+  box-shadow: var(--card-shadow); 
+  text-decoration: none; /* Removes the underline from the link */
+  color: inherit; /* Keeps the text color normal */
+  display: block; /* Makes the whole area clickable */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.mission-card:hover { transform: translateY(-10px); }
+
+/* Adds a nice "pop" effect when hovering over the card */
+.mission-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 0 rgba(0,0,0,0.12), 0 4px 30px rgba(0,0,0,0.15);
+}
+
+.mission-play { 
+  display: block; 
+  width: 100%; 
+  text-align: center; 
+  padding: 0.6rem; 
+  border-radius: 999px; 
+  background: var(--ground); 
+  color: white; 
+  font-family: 'Fredoka One'; 
+  margin-top: 1rem; 
+}
 
 /* Big coloured number in corner */
 .mission-num {
@@ -1258,25 +1277,29 @@ footer {
 <!-- ============================================================
      JOIN
      ============================================================ -->
-<section id="join">
-  <div class="join-panel">
-    <div class="join-tag">Begin Training</div>
-    <h2 class="join-title">Ready to Become a Legend?</h2>
-    <p class="join-sub">
-      Enter your email to receive your agent dossier and access
-      to the Acorn Cipher Terminal when it goes live.
-    </p>
-    <div class="join-form">
-      <input
-        class="join-input"
-        id="join-input"
-        type="email"
-        placeholder="agent@spysquirrel.io"
-        autocomplete="email"
-      />
-      <button class="join-btn" onclick="joinWaitlist()">Enlist</button>
-    </div>
-    <p id="join-msg"></p>
+<section id="tests">
+  <div class="tests-grid">
+    
+    <a href="trainingPage1.html" class="mission-card">
+      <h3>Mission 1</h3>
+      <div class="mission-play">Enter</div>
+    </a>
+
+    <a href="trainingPage2.html" class="mission-card">
+      <h3>Mission 2</h3>
+      <div class="mission-play">Enter</div>
+    </a>
+
+    <a href="mission3.html" class="mission-card">
+      <h3>Mission 3</h3>
+      <div class="mission-play">Enter</div>
+    </a>
+
+    <a href="final.html" class="mission-card">
+      <h3>Final Showdown</h3>
+      <div class="mission-play">Enter</div>
+    </a>
+
   </div>
 </section>
 
