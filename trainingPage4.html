@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SpySquirrel Mission 4</title>
+<title>SpySquirrel Mission 4: Boss Battle</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
 
 <style>
@@ -16,22 +16,22 @@ body { margin: 0; font-family: 'Nunito', sans-serif; background: var(--sky); ove
   background: var(--ground); border-bottom: 4px solid var(--ground-dark);
   display: flex; justify-content: space-between; padding: 1rem 2rem; color: white; font-weight: 800;
 }
-.logo { font-family: 'Fredoka One'; }
 
 #game { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; gap: 1rem; }
-.title { font-size: 1.5rem; font-weight: 900; }
 
 /* BOSS IMAGE */
-#bossImg { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid white; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+#bossImg { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid white; margin-bottom: 10px; }
 
 .bar-container { width: 300px; height: 25px; background: #ddd; border-radius: 999px; overflow: hidden; }
 .bar { height: 100%; width: 0%; transition: width 0.1s; }
 .player { background: var(--yellow); }
 .enemy { background: var(--red); }
 
-#endScreen { position: absolute; inset: 0; display: none; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
-.end-card { background: var(--panel); padding: 2rem 3rem; border-radius: 20px; text-align: center; }
-button { margin-top: 1rem; padding: 0.6rem 1.5rem; border-radius: 999px; border: none; background: var(--yellow); font-family: 'Fredoka One'; cursor: pointer; }
+/* OVERLAYS (Intro and End) */
+#introScreen, #endScreen { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; color: white; text-align: center; }
+.card { background: var(--panel); padding: 2rem; border-radius: 20px; color: #333; max-width: 400px; }
+
+button { margin-top: 1rem; padding: 0.8rem 2rem; border-radius: 999px; border: none; background: var(--yellow); font-family: 'Fredoka One'; cursor: pointer; font-size: 1.1rem; }
 </style>
 </head>
 
@@ -41,26 +41,32 @@ button { margin-top: 1rem; padding: 0.6rem 1.5rem; border-radius: 999px; border:
   <div class="logo">🐿 Mission 4: Final Showdown</div>
 </div>
 
-<div id="game">
-  <img id="bossImg" src="https://i.imgur.com/9IGyEqs.jpg" alt="Boss Cat" />
-  
-  <div class="title">SPAM SPACEBAR TO WIN</div>
+<div id="introScreen">
+  <div class="card">
+    <h2>Boss Battle!</h2>
+    <p><em>"Mr. Whiskers has been keeping an eye on you and has finally confronted you. Defeat him now or else your training would have been for naught!"</em></p>
+    <button onclick="startGame()">Start Battle</button>
+  </div>
+</div>
 
+<div id="game">
+  <img id="bossImg" src="CATCOP.png" alt="Boss Cat" />
+  <div style="font-weight: 900; font-size: 1.2rem;">SPAM SPACEBAR TO WIN</div>
   <div>
     <p>🟡 You</p>
     <div class="bar-container"><div id="playerBar" class="bar player"></div></div>
   </div>
-
   <div>
-    <p>🔴 Boss Cat</p>
+    <p>🔴 Mr. Whiskers</p>
     <div class="bar-container"><div id="enemyBar" class="bar enemy"></div></div>
   </div>
 </div>
 
-<div id="endScreen">
-  <div class="end-card">
+<div id="endScreen" style="display: none;">
+  <div class="card">
     <h2 id="resultText"></h2>
     <p id="rankText"></p>
+    <button onclick="location.reload()">Retry Battle</button>
     <button onclick="window.location.href='final.html'">View Final Results ➜</button>
   </div>
 </div>
@@ -68,22 +74,30 @@ button { margin-top: 1rem; padding: 0.6rem 1.5rem; border-radius: 999px; border:
 <script>
 let playerProgress = 0;
 let enemyProgress = 0;
+let startTime; // Added for timing
 const playerBar = document.getElementById("playerBar");
 const enemyBar = document.getElementById("enemyBar");
+let gameStarted = false;
 let gameOver = false;
 
+function startGame() {
+  document.getElementById("introScreen").style.display = "none";
+  gameStarted = true;
+  startTime = Date.now(); // Record start time
+  
+  setInterval(() => {
+    if (gameOver) return;
+    enemyProgress += 0.8 + Math.random() * 1.2;
+    updateBars();
+  }, 100);
+}
+
 document.addEventListener("keydown", (e) => {
-  if (e.code === "Space" && !gameOver) {
-    playerProgress += 3; 
+  if (e.code === "Space" && gameStarted && !gameOver) {
+    playerProgress += 2.2; 
     updateBars();
   }
 });
-
-setInterval(() => {
-  if (gameOver) return;
-  enemyProgress += 0.5 + Math.random() * 1.0;
-  updateBars();
-}, 100);
 
 function updateBars() {
   playerBar.style.width = playerProgress + "%";
@@ -96,11 +110,22 @@ function updateBars() {
 function endGame(win) {
   gameOver = true;
   document.getElementById("endScreen").style.display = "flex";
+  
+  // Calculate how long it took in seconds
+  let timeTaken = (Date.now() - startTime) / 1000;
+  let rank;
 
-  let rank = playerProgress > 120 ? "Legend 🔥" : playerProgress > 100 ? "Elite 🟡" : playerProgress > 70 ? "Agent 🔵" : "Rookie 🟢";
+  if (!win) {
+    rank = "Rookie 🟢";
+  } else {
+    // New Speed-based logic:
+    if (timeTaken < 5) rank = "Legend 🔥";        // Won in under 5s
+    else if (timeTaken < 8) rank = "Elite 🟡";   // Won in under 8s
+    else rank = "Agent 🔵";                      // Won slower than 8s
+  }
 
-  document.getElementById("resultText").textContent = win ? "YOU DEFEATED THE CAT 🐱" : "THE CAT WON 😿";
-  document.getElementById("rankText").textContent = "Final Rank: " + rank;
+  document.getElementById("resultText").textContent = win ? "YOU DEFEATED MR. WHISKERS 🐱" : "MR. WHISKERS WON 😿";
+  document.getElementById("rankText").textContent = "Final Rank: " + rank + " (Time: " + timeTaken.toFixed(1) + "s)";
   localStorage.setItem("mission4Rank", rank);
 }
 </script>
